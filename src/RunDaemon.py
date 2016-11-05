@@ -13,7 +13,7 @@ def set_daemon_runner(my_daemon, handler):
 
 def set_logger(logger):
     logger.setLevel(logging.INFO)
-    handler = logging.FileHandler('../../res/my_daemon.log')
+    handler = logging.FileHandler('../res/my_daemon.log')
     formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
     handler.setFormatter(formatter)
     logger.addHandler(handler)
