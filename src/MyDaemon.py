@@ -3,6 +3,7 @@
 import time
 import os
 from Sniffer import *
+from Modifier import *
 
 
 class MyDaemon:
@@ -18,10 +19,12 @@ class MyDaemon:
 
     def run(self):
         self.logger.info("Daemon started")
-        self.socket = create_socket(self.device)
-        while True:
+        run_queue()
+        # Sniff
+        # self.socket = create_socket(self.device)
+        # while True:
             # self.write_to_log_every_second()
-            self.write_to_log_protocol()
+            # self.write_to_log_protocol()
 
     def write_to_log_protocol(self):
         self.logger.info(sniff(self.socket))
