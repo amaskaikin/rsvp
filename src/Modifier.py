@@ -1,8 +1,8 @@
 # Modifier of packets
 
-import os
 from netfilterqueue import NetfilterQueue
 from scapy.layers.inet import IP
+from scapy.all import *
 from Const import *
 
 
