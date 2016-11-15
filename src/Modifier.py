@@ -1,8 +1,9 @@
 # Modifier of packets
 
+import os
 from netfilterqueue import NetfilterQueue
 from scapy.layers.inet import IP
-import os
+from Const import *
 
 
 def print_and_accept(pkt):
@@ -14,9 +15,10 @@ def print_and_accept(pkt):
 
 
 def run_queue():
-    os.system('iptables -I INPUT -d 192.168.44.53 -j NFQUEUE --queue-num 1')
+    os.system('iptables -I INPUT -d ' + Const.TARGET_ADDRESS +
+              ' -j NFQUEUE --queue-num ' + str(Const.QUEUE_NUM))
     q = NetfilterQueue()
-    q.bind(1, print_and_accept)
+    q.bind(Const.QUEUE_NUM, print_and_accept)
     try:
         q.run()
     except KeyboardInterrupt:
