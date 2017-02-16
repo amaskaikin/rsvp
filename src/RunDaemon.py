@@ -36,7 +36,7 @@ def run_daemon(args):
 
 
 def stop_daemon(signum, frame):
-    os.system('iptables -D INPUT -d ' + Const.TARGET_ADDRESS +
+    os.system('iptables -D ' + Const.IPTABLES_MODE + ' -d ' + Const.TARGET_ADDRESS +
               ' -j NFQUEUE --queue-num ' + str(Const.QUEUE_NUM))
 
 

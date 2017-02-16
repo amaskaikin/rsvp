@@ -9,14 +9,15 @@ from Const import *
 def generate_data(dst):
     # Create test RSVP packet
     data = IP(dst=dst)/RSVP(TTL=65)
+    data.show2()
     while True:
-        output = sr(data)
+        output = send(data)
         print(output)
         time.sleep(1)
 
 
 if __name__ == '__main__':
     try:
-        generate_data(Const.TARGET_RSVP_ADDRESS)
+        generate_data(Const.TARGET_ADDRESS)
     except KeyboardInterrupt:
         pass
