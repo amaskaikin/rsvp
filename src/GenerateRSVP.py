@@ -8,11 +8,10 @@ from Const import *
 
 def generate_data(dst):
     # Create test RSVP packet
-    data = IP(dst=dst)/RSVP(TTL=65)
+    data = IP(dst=dst)/RSVP(TTL=65, Class=0x01)/RSVP_Object(Class=0x03)/RSVP_HOP(neighbor='192.168.0.107')
     data.show2()
     while True:
-        output = send(data)
-        print(output)
+        send(data)
         time.sleep(1)
 
 

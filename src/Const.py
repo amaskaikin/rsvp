@@ -3,5 +3,5 @@ class Const:
         pass
 
     QUEUE_NUM = 42
-    TARGET_ADDRESS = '10.10.2.2'
+    TARGET_ADDRESS = '192.168.0.100'
     IPTABLES_MODE = 'FORWARD'

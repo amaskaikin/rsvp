@@ -19,7 +19,7 @@ class MyDaemon:
 
     def run(self):
         self.logger.info("Daemon started")
-        run_queue()
+        process_packet()
         # Sniff
         # self.socket = create_socket(self.device)
         # while True:
