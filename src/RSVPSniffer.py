@@ -15,7 +15,7 @@ def modify_packet(pkt):
     send(data)
 
 
-def process_packet():
+def catch_packet():
     sock = socket.socket(socket.AF_INET, socket.SOCK_RAW, socket.IPPROTO_RSVP)
     print "Socket created"
     try:

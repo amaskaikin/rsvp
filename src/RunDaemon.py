@@ -6,8 +6,7 @@ import sys
 import signal
 
 from daemon import runner
-from MyDaemon import MyDaemon
-from Const import *
+from RSVPDaemon import MyDaemon
 
 extra = {'device_name': ''}
 
@@ -36,8 +35,7 @@ def run_daemon(args):
 
 
 def stop_daemon(signum, frame):
-    os.system('iptables -D ' + Const.IPTABLES_MODE + ' -d ' + Const.TARGET_ADDRESS +
-              ' -j NFQUEUE --queue-num ' + str(Const.QUEUE_NUM))
+    os.kill(os.getpid(), signal.SIGTERM)
 
 
 if __name__ == '__main__':

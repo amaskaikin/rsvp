@@ -2,8 +2,7 @@
 
 import time
 import os
-from Sniffer import *
-from Modifier import *
+from RSVPSniffer import *
 
 
 class MyDaemon:
@@ -19,7 +18,7 @@ class MyDaemon:
 
     def run(self):
         self.logger.info("Daemon started")
-        process_packet()
+        catch_packet()
         # Sniff
         # self.socket = create_socket(self.device)
         # while True:
