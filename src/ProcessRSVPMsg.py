@@ -1,4 +1,5 @@
 from RSVPBuilder import *
+from Const import Const
 
 
 def generate_path_msg(**kwargs):
@@ -8,16 +9,16 @@ def generate_path_msg(**kwargs):
     for key, value in kwargs.iteritems():
         if key == 'session':
             length = len(str(value.get('Data')))
-            obj = dict(Class=0x01, Length=length + 4)
+            obj = dict(Class=Const.CL_SESSION, Length=length + 4)
             path_msg = path_msg/get_object(**obj)/get_data(**value)
         if key == 'hop':
-            obj = dict(Class=0x03, Length=16)
+            obj = dict(Class=Const.CL_HOP, Length=16)
             path_msg = path_msg/get_object(**obj)/get_hop(**value)
         if key == 'time':
-            obj = dict(Class=0x05)
+            obj = dict(Class=Const.CL_TIME)
             path_msg = path_msg/get_object(**obj)/get_time(**value)
         if key == 'sender_tspec':
             length = len(str(value.get('Tokens')))
-            obj = dict(Class=0x0c, Length=length + 12)
+            obj = dict(Class=Const.CL_SENDER, Length=length + 12)
             path_msg = path_msg/get_object(**obj)/get_sender_tspec(**value)
     return path_msg

@@ -35,7 +35,9 @@ def run_daemon(args):
 
 
 def stop_daemon(signum, frame):
-    os.kill(os.getpid(), signal.SIGTERM)
+    # os.kill(os.getpid(), signal.SIGTERM)
+    # TODO: handle stopping daemon
+    pass
 
 
 if __name__ == '__main__':
