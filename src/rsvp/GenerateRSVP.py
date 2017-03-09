@@ -1,11 +1,9 @@
 # Generate RSVP data
 
-from scapy.contrib.rsvp import *
-from scapy.layers.inet import IP
 from scapy.all import *
-from Const import *
-from RSVP_Path import *
+
 from ProcessRSVPMsg import *
+from RSVP_Path import *
 
 
 def generate_data(dst):

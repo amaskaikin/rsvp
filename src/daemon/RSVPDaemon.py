@@ -13,7 +13,7 @@ class MyDaemon:
         self.stdin_path = '/dev/null'
         self.stdout_path = '/dev/tty'
         self.stderr_path = '/dev/tty'
-        self.pidfile_path = os.path.abspath('../res/my_daemon.pid')
+        self.pidfile_path = os.path.abspath('res/my_daemon.pid')
         self.pidfile_timeout = 5
 
     def run(self):

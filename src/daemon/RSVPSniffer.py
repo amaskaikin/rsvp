@@ -1,9 +1,10 @@
 # Packet Modifier
 
-from scapy.contrib.rsvp import *
-from Const import *
-from scapy.all import *
 import socket
+from scapy.all import *
+from scapy.contrib.rsvp import *
+
+from src.utils.Const import *
 
 
 def modify_packet(pkt):
