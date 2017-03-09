@@ -21,4 +21,8 @@ def generate_path_msg(**kwargs):
             length = len(str(value.get('Tokens')))
             obj = dict(Class=Const.CL_SENDER, Length=length + 12)
             path_msg = path_msg/get_object(**obj)/get_sender_tspec(**value)
+        if key == 'adspec':
+            length = len(str(value.get('Data')))
+            obj = dict(Class=Const.CL_ADSPEC, Length=length + 4)
+            path_msg = path_msg/get_object(**obj)/get_data(**value)
     return path_msg
