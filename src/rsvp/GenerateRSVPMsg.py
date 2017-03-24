@@ -2,7 +2,7 @@ from RSVPBuilder import *
 from src.utils.Const import Const
 
 
-def generate_path_msg(**kwargs):
+def generate_msg(**kwargs):
     if 'header' not in kwargs:
         print "Header not exists"
     path_msg = get_header(**kwargs.pop('header'))
@@ -28,5 +28,13 @@ def generate_path_msg(**kwargs):
         if key == 'sender_template':
             length = len(str(value.get('Data')))
             obj = dict(Class=Const.CL_SENDTEMP, Length=length + 4)
+            path_msg = path_msg/get_object(**obj)/get_data(**value)
+        if key == 'style':
+            length = len(str(value.get('Data')))
+            obj = dict(Class=Const.CL_STYLE, Length=length + 4)
+            path_msg = path_msg/get_object(**obj)/get_data(**value)
+        if key == 'flowspec':
+            length = len(str(value.get('Data')))
+            obj = dict(Class=Const.CL_FLOWSPEC, Length=length + 4)
             path_msg = path_msg/get_object(**obj)/get_data(**value)
     return path_msg

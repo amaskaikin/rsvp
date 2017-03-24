@@ -3,13 +3,13 @@ from src.data.ReservationRequest import *
 from src.utils.Utils import *
 from src.utils.Const import *
 from src.utils.Logger import Logger
+from src.htb.Reserve import *
 
 
 def process_path(data):
     Logger.logger.info('Processing Path Message. . .')
     res_req = get_reservation_info(data)
-    # TODO: call htb method for checking available bandwidth
-    is_available = True
+    is_available = check_reserve(res_req)
     is_last_hop = False
     # TODO: send error message
     if is_available is True:
