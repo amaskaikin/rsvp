@@ -25,4 +25,8 @@ def generate_path_msg(**kwargs):
             length = len(str(value.get('Data')))
             obj = dict(Class=Const.CL_ADSPEC, Length=length + 4)
             path_msg = path_msg/get_object(**obj)/get_data(**value)
+        if key == 'sender_template':
+            length = len(str(value.get('Data')))
+            obj = dict(Class=Const.CL_SENDTEMP, Length=length + 4)
+            path_msg = path_msg/get_object(**obj)/get_data(**value)
     return path_msg

@@ -1,8 +1,9 @@
 class ReservationRequest:
-    def __init__(self, dst_ip, qos_val, inface):
+    def __init__(self, src_ip, dst_ip, tos, speed):
+        self._src_ip = src_ip
         self._dst_ip = dst_ip
-        self._qos_val = qos_val
-        self._inface = inface
+        self._tos = tos
+        self._speed = speed
 
     @property
     def dst_ip(self):
@@ -13,17 +14,25 @@ class ReservationRequest:
         self._dst_ip = val
 
     @property
-    def qos_val(self):
-        return self._qos_val
+    def src_ip(self):
+        return self._src_ip
 
-    @qos_val.setter
-    def qos_val(self, val):
-        self._qos_val = val
+    @src_ip.setter
+    def src_ip(self, val):
+        self._src_ip = val
 
     @property
-    def inface(self):
-        return self._inface
+    def tos(self):
+        return self._tos
 
-    @inface.setter
-    def inface(self, val):
-        self._inface = val
+    @tos.setter
+    def tos(self, val):
+        self._tos = val
+
+    @property
+    def speed(self):
+        return self._speed
+
+    @speed.setter
+    def speed(self, val):
+        self._speed = val

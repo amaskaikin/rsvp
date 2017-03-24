@@ -25,8 +25,8 @@ class MyDaemon:
             # self.write_to_log_every_second()
             # self.write_to_log_protocol()
 
-    def write_to_log_protocol(self):
-        self.logger.info(sniff(self.socket))
+    def write_log(self, msg):
+        self.logger.info(msg)
 
     def write_to_log_every_second(self):
         # self.logger.debug("Debug message")
