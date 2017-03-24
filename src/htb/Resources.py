@@ -20,27 +20,27 @@ class Resources:
         return next(device for device in self.devices if device.name == name)
 
 
-class Class:
-    def __init__(self, class_id, rate, tos):
-        self.class_id = class_id
-        self.rate = rate
-        self.tos = tos
-
-
 class Device:
     def __init__(self, name):
         self.name = name
         self.bandwidth = '100kbps'
-        self.classes = []
+        self.temp_classes = []
+        self.available_classes_ids = {'10': 'free', '20': 'free', '30': 'free',
+                                      '40': 'free', '50': 'free', '60': 'free',
+                                      '70': 'free', '80': 'free', '90': 'free'}
         call(['sudo', 'tc', 'qdisc', 'add', 'dev', self.name,
               'root', 'handle', '1:', 'htb', 'default', 12])
         call(['sudo', 'tc', 'class', 'add', 'dev', self.name,
               'parent', '1:', 'classid', '1:1', 'htb', 'rate', self.bandwidth])
 
-    def class_exists(self, new_class_id):
-        for htb_class in self.classes:
-            if htb_class.class_id == new_class_id:
-                return True
+    def get_available_class_id(self):
+        class_id = '0'
+        for key, value in self.available_classes_ids:
+            if value == 'free':
+                self.available_classes_ids[key] = 'busy'
+                class_id = key
+                break
+        return class_id
 
     def bandwidth_is_available(self, new_rate):
         new_rate = int(''.join(char for char in new_rate if char.isdigit()))
@@ -52,14 +52,40 @@ class Device:
         else:
             return False
 
-    def add_class(self, class_id, rate, tos):
-        if self.bandwidth_is_available(rate) and not self.class_exists(class_id):
-            call(['sudo', 'tc', 'class', 'add', 'dev', self.name,
-                  'parent', '1:1', 'classid', class_id, 'htb', 'rate', rate])
-            call(['sudo', 'tc', 'filter', 'add', 'dev', self.name,
-                  'parent', '1:', 'protocol', 'ip', 'prio', '1', 'u32',
-                  'match', 'ip', 'tos', tos, 'flowid', class_id])
-            # call(['sudo', 'tc', 'qdisc', 'add', 'dev', self.name,
-            #       'parent', class_id, 'handle', '20:', 'pfifo', 'limit', '5'])
-            new_class = Class(class_id, rate, tos)
-            self.classes.append(new_class)
+    def reservation_is_available(self, ip_src, ip_dst, rate, tos):
+        class_id = self.get_available_class_id()
+        if self.bandwidth_is_available(rate) and class_id != '0':
+            new_class = Class(class_id, ip_src, ip_dst, rate, tos)
+            self.temp_classes.append(new_class)
+            return True
+        else:
+            return False
+
+    def call_htb(self, ip_src, ip_dst, rate, tos):
+        # check and remove class
+        htb_class = 0
+        for htb_class in self.temp_classes:
+            if htb_class.ip_src == ip_src and htb_class.ip_dst == ip_dst and htb_class.rate == rate and htb_class.tos == tos:
+                self.temp_classes.remove(htb_class)
+                break
+            else:
+                return False
+
+        # call htb cmd
+        call(['sudo', 'tc', 'class', 'add', 'dev', self.name,
+              'parent', '1:1', 'classid', htb_class.class_id, 'htb', 'rate', htb_class.rate])
+        call(['sudo', 'tc', 'filter', 'add', 'dev', self.name,
+              'parent', '1:', 'protocol', 'ip', 'prio', '1', 'u32',
+              'match', 'ip', 'tos', htb_class.tos, 'flowid', htb_class.class_id])
+        # call(['sudo', 'tc', 'qdisc', 'add', 'dev', self.name,
+        #       'parent', class_id, 'handle', '20:', 'pfifo', 'limit', '5'])
+        return True
+
+
+class Class:
+    def __init__(self, class_id, ip_src, ip_dst, rate, tos):
+        self.class_id = class_id
+        self.ip_src = ip_src
+        self.ip_dst = ip_dst
+        self.rate = rate
+        self.tos = tos

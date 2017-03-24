@@ -1,3 +1,7 @@
+from subprocess import check_output
+# TODO: import variable resources from daemon
+
+
 def get_layer(data, pclass):
     cnt = 0
     while True:
@@ -9,3 +13,19 @@ def get_layer(data, pclass):
         else:
             break
         cnt += 1
+
+
+def get_device(ip_src):
+    # get device's name
+    device_name = check_output(['ip', 'route', 'get', ip_src]).split()[4]
+
+    # get/add device
+    if resources.device_exists(device_name):
+        # get device
+        device = resources.get_device(device_name)
+    else:
+        # add and get device
+        resources.add_device(device_name)
+        device = resources.get_device(device_name)
+
+    return device
