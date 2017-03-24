@@ -24,7 +24,6 @@ def modify_packet(pkt):
 def process_packet(pkt):
     data = IP(pkt)
     rsvp_class = data.getlayer('RSVP').getfieldval('Class')
-    print rsvp_class
     if rsvp_class == 0x01:
         process_path(data)
 

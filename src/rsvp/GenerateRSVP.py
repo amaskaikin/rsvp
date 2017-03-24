@@ -2,7 +2,7 @@
 
 from scapy.all import *
 
-from ProcessRSVPMsg import *
+from GenerateRSVPMsg import *
 from RSVP_Path import *
 
 

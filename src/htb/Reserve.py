@@ -1,7 +1,7 @@
 # Reserve resources
 
 from Resources import Resources
-from utils import Utils
+from src.utils.Utils import *
 
 # TODO: create resources in daemon
 resources = Resources()
@@ -10,10 +10,10 @@ resources = Resources()
 
 
 def check_reserve(ip_src, ip_dst, rate, tos):
-    device = Utils.get_device(ip_src)
+    device = get_device(ip_src)
     return device.reservation_is_available(ip_src, ip_dst, rate, tos)
 
 
 def reserve(ip_src, ip_dst, rate, tos):
-    device = Utils.get_device(ip_src)
+    device = get_device(ip_src)
     return device.call_htb(ip_src, ip_dst, rate, tos)

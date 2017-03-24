@@ -1,17 +1,25 @@
+from scapy.all import *
 from src.data.ReservationRequest import *
 from src.utils.Utils import *
 from src.utils.Const import *
+from src.utils.Logger import Logger
 
 
 def process_path(data):
+    Logger.logger.info('Processing Path Message. . .')
     res_req = get_reservation_info(data)
     # TODO: call htb method for checking available bandwidth
-    is_available = False
+    is_available = True
     is_last_hop = False
+    # TODO: send error message
     if is_available is True:
-        if is_last_hop is False:
-            push_path()
+        Logger.logger.info('Required bandwidth is available')
 
+        if is_last_hop is False:
+            send_next_hop(data)
+        else:
+            # TODO: if true, ask htb for reservation
+            pass
 
 
 def get_reservation_info(data):
@@ -33,9 +41,20 @@ def get_reservation_info(data):
     if int(adspec_data[3]) == 1:
         req_speed = adspec_data[4:10].lstrip('0')
 
+    Logger.logger.info('Reservation request: src ip - ' + src_ip + ' dst ip - ' + dst_ip +
+                       'tos - ' + tos + ' rate - ' + req_speed)
+
     if not any((src_ip, dst_ip, tos, req_speed)):
-        print 'Illegal values'
+        Logger.logger.info('Illegal values: src ip - ' + src_ip + ' dst ip - ' + dst_ip +
+                           'tos - ' + tos + ' rate - ' + req_speed)
 
     res_req = ReservationRequest(src_ip, dst_ip, tos, req_speed)
     return res_req
 
+
+def send_next_hop(data):
+    # TODO: call function which returns next hop address
+    ip = Const.TARGET_ADDRESS
+    Logger.logger.info('Passing Path message to next hop: ' + ip)
+    data.getlayer('IP').setfieldval('dst', ip)
+    send(data)

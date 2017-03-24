@@ -7,30 +7,21 @@ import signal
 
 from daemon import runner
 from RSVPDaemon import MyDaemon
+from src.utils.Logger import Logger
 
 extra = {'device_name': ''}
 
 
 def run_daemon(args):
-    if len(args) == 3:
-        # set logger
-        extra['device_name'] = args[2]
-        logger = logging.getLogger()
-        logger.setLevel(logging.INFO)
-        handler = logging.FileHandler('res/my_daemon.log')
-        formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(device_name)s - %(message)s')
-        handler.setFormatter(formatter)
-        logger.addHandler(handler)
-        logger = logging.LoggerAdapter(logger, extra)
-
-        daemon_runner = runner.DaemonRunner(MyDaemon(logger, args[2]))
+    if len(args) == 2:
+        daemon_runner = runner.DaemonRunner(MyDaemon())
         daemon_runner.daemon_context.signal_map = {
             signal.SIGTERM: stop_daemon
         }
-        daemon_runner.daemon_context.files_preserve = [handler.stream]
+        daemon_runner.daemon_context.files_preserve = [Logger.handler.stream]
         daemon_runner.do_action()
     else:
-        print "usage: %s start|restart device" % args[0]
+        print "usage: %s start|restart" % args[0]
         sys.exit(2)
 
 
