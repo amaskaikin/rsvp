@@ -10,3 +10,5 @@ class Const:
     CL_SENDER = 0x0C
     CL_ADSPEC = 0x0D
     CL_SENDTEMP = 0x0B
+
+    BANDWIDTH = 1000

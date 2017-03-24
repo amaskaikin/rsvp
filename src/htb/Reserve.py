@@ -9,11 +9,11 @@ resources = Resources()
 # next_hop = check_output(['ip', 'route', 'get', ip_dst]).split()[2]
 
 
-def check_reserve(ip_src, ip_dst, rate, tos):
-    device = get_device(ip_src)
-    return device.reservation_is_available(ip_src, ip_dst, rate, tos)
+def check_reserve(request):
+    device = get_device(request.src_ip)
+    return device.reservation_is_available(request)
 
 
-def reserve(ip_src, ip_dst, rate, tos):
-    device = get_device(ip_src)
-    return device.call_htb(ip_src, ip_dst, rate, tos)
+def reserve(request):
+    device = get_device(request.src_ip)
+    return device.call_htb(request)
