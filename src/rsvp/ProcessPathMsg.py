@@ -9,11 +9,11 @@ def process_path(data):
     is_available = check_reserve(res_req)
     is_last_hop = res_req.dst_ip == get_current_hop(res_req.dst_ip)
     # TODO: send error message
-    if is_available is True:
+    if is_available:
         Logger.logger.info('Required bandwidth is available')
 
-        if is_last_hop is False:
-            send_next_hop(res_req.dst_ip, data, 'Path')
+        if not is_last_hop:
+            send_next_hop(data)
         else:
             Logger.logger.info('Path message reached the last hop')
             process_last_hop(res_req, data)
