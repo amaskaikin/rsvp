@@ -22,6 +22,8 @@ def process_packet(pkt):
     rsvp_class = data.getlayer('RSVP').getfieldval('Class')
     if rsvp_class == 0x01:
         process_path(data)
+    if rsvp_class == 0x02:
+        process_resv(data)
 
 
 def catch_packet():

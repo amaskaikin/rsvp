@@ -13,8 +13,8 @@ def generate_resv(data):
     hop = {'neighbor': data.getlayer('HOP').getfieldval('neighbor'),
            'inface': data.getlayer('HOP').getfieldval('inface')}
     rsvp_pkt = dict(header=HEADER, session=session, hop=hop, time=TIME,
-                    style=STYLE, flowspec=get_layer(data, Const.CL_ADSPEC).getfieldval('Data'))
-    pkt = IP(dst=data.getlayer('HOP').getfieldval('dst'))/generate_msg(**rsvp_pkt)
+                    style=STYLE, flowspec={'Data': get_layer(data, Const.CL_ADSPEC).getfieldval('Data')})
+    pkt = IP(dst=data.getlayer('IP').getfieldval('dst'))/generate_msg(**rsvp_pkt)
     # pkt = IP(dst=dst) / RSVP(TTL=65, Class=0x01) / RSVP_Object(Class=0x03) / RSVP_HOP(neighbor='192.168.0.107')
     pkt.show2()
     Logger.logger.info('Sending Resv Message. . .')
@@ -26,6 +26,7 @@ def process_resv(data):
     req = get_reservation_info(data)
     is_reserved = reserve(req)
     is_sender = req.src_ip == get_current_hop(req.src_ip)
+    Logger.logger.info(req.src_ip + ' ' + get_current_hop(req.src_ip))
     if is_reserved:
         Logger.logger.info('Reservation success')
         if not is_sender:

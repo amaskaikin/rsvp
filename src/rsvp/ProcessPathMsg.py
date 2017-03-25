@@ -8,6 +8,7 @@ def process_path(data):
     res_req = get_reservation_info(data)
     is_available = check_reserve(res_req)
     is_last_hop = res_req.dst_ip == get_current_hop(res_req.dst_ip)
+    print is_last_hop
     # TODO: send error message
     if is_available:
         Logger.logger.info('Required bandwidth is available')
