@@ -1,9 +1,5 @@
 # Packet Modifier
 
-import socket
-from scapy.all import *
-from scapy.contrib.rsvp import *
-from src.utils.Utils import *
 from src.rsvp.ProcessPathMsg import *
 
 from src.utils.Const import *
