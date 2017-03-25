@@ -9,6 +9,7 @@ from daemon import runner
 from RSVPDaemon import MyDaemon
 from src.utils.Logger import Logger
 from src.htb.Resources import Resources
+from src.data.ReservationRequest import ReservationRequest
 
 extra = {'device_name': ''}
 
@@ -23,6 +24,7 @@ def run_daemon(args):
         daemon_runner.do_action()
         # create singleton instance
         resources = Resources.Instance()
+        req = ReservationRequest.Instance()
     else:
         print "usage: %s start|restart" % args[0]
         sys.exit(2)

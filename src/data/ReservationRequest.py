@@ -1,9 +1,13 @@
+from src.utils.Singleton import *
+
+
+@Singleton
 class ReservationRequest:
-    def __init__(self, src_ip, dst_ip, tos, speed):
-        self._src_ip = src_ip
-        self._dst_ip = dst_ip
-        self._tos = tos
-        self._speed = speed
+    def __init__(self):
+        self._src_ip = None
+        self._dst_ip = None
+        self._tos = None
+        self._speed = None
 
     @property
     def dst_ip(self):
