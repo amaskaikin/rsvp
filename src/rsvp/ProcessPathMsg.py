@@ -1,6 +1,5 @@
 from scapy.all import *
 from src.data.ReservationRequest import *
-from src.utils.Utils import *
 from src.utils.Const import *
 from src.utils.Logger import Logger
 from src.htb.Reserve import *
@@ -12,10 +11,10 @@ def process_path(data):
     is_available = check_reserve(res_req)
     is_last_hop = res_req.dst_ip == get_current_hop(res_req.dst_ip)
     # TODO: send error message
-    if is_available is True:
+    if is_available:
         Logger.logger.info('Required bandwidth is available')
 
-        if is_last_hop is False:
+        if not is_last_hop:
             send_next_hop(data)
         else:
             # TODO: if true, ask htb for reservation

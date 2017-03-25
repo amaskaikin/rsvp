@@ -75,13 +75,11 @@ class Device:
               'parent', '1:', 'classid', '1:1', 'htb', 'rate', str(self.bandwidth) + 'kbps'])
 
     def get_available_class_id(self):
-        class_id = '0'
         for key, value in self.available_classes_ids.iteritems():
             if value == 'free':
                 self.available_classes_ids[key] = 'busy'
-                class_id = key
-                break
-        return class_id
+                return key
+        return False
 
     def bandwidth_is_available(self, new_rate):
         new_bandwidth = self.bandwidth - new_rate
@@ -101,11 +99,10 @@ class Device:
         return False
 
     def reservation_is_available(self, ip_src, ip_dst, rate, tos):
-        class_exists = self.class_exists(ip_src, ip_dst, rate, tos)
-        if class_exists:
+        if not self.bandwidth_is_available(rate) or self.class_exists(ip_src, ip_dst, rate, tos):
             return False
         class_id = self.get_available_class_id()
-        if self.bandwidth_is_available(rate) and class_id != '0':
+        if class_id:
             new_class = Class(class_id, ip_src, ip_dst, rate, tos)
             self.temp_classes.append(new_class)
             return True
