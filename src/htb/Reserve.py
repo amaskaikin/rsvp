@@ -5,7 +5,7 @@ from src.utils.Utils import *
 # TODO: create resources in daemon
 # resources = Resources()
 # TODO: get next hop in daemon
-# next_hop = check_output(['ip', 'route', 'get', ip_dst]).split()[2]
+# next_hop = check_output(['ip', 'route', 'get', ip_dst]).split()[4]
 
 
 def check_reserve(request):

@@ -21,7 +21,7 @@ def get_device(ip_src):
     resources = Resources.Instance()
 
     # get device's name
-    device_name = check_output(['ip', 'route', 'get', ip_src]).split()[4]
+    device_name = check_output(['ip', 'route', 'get', ip_src]).split()[2]
 
     # get/add device
     if resources.device_exists(device_name):

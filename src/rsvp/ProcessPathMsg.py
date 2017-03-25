@@ -10,6 +10,7 @@ def process_path(data):
     Logger.logger.info('Processing Path Message. . .')
     res_req = get_reservation_info(data)
     is_available = check_reserve(res_req)
+    print is_available
     is_last_hop = False
     # TODO: send error message
     if is_available is True:
@@ -48,7 +49,7 @@ def get_reservation_info(data):
         Logger.logger.info('Illegal values: src ip - ' + src_ip + ' dst ip - ' + dst_ip +
                            'tos - ' + tos + ' rate - ' + req_speed)
 
-    res_req = ReservationRequest(src_ip, dst_ip, tos, req_speed)
+    res_req = ReservationRequest(src_ip, dst_ip, tos, int(req_speed))
     return res_req
 
 

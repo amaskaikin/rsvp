@@ -70,7 +70,7 @@ class Device:
                                       '40': 'free', '50': 'free', '60': 'free',
                                       '70': 'free', '80': 'free', '90': 'free'}
         call(['sudo', 'tc', 'qdisc', 'add', 'dev', self.name,
-              'root', 'handle', '1:', 'htb', 'default', 12])
+              'root', 'handle', '1:', 'htb', 'default', '12'])
         call(['sudo', 'tc', 'class', 'add', 'dev', self.name,
               'parent', '1:', 'classid', '1:1', 'htb', 'rate', str(self.bandwidth) + 'kbps'])
 
