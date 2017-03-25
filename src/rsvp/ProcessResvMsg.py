@@ -22,11 +22,12 @@ def generate_resv(data):
 def process_resv(data):
     Logger.logger.info('Processing Resv Message. . .')
     req = ReservationRequest.Instance()
-    Logger.logger.info('[Resv] Reservation request: src ip: ' + req.src_ip + ', dst ip: ' + req.dst_ip +
-                       ', tos: ' + req.tos + ', rate: ' + req.speed)
+    Logger.logger.info('[Resv] Reservation request: src ip: ' + str(req.src_ip) + ', dst ip: ' + str(req.dst_ip) +
+                       ', tos: ' + str(req.tos) + ', rate: ' + str(req.speed))
     # req = get_reservation_info(data, 'Resv')
     is_reserved = reserve(req)
     is_sender = req.src_ip == get_current_hop(req.src_ip)
+    Logger.logger.info('[Resv] : req_src ip: ' + str(req.src_ip) + ', src ip: ' + str(get_current_hop(req.src_ip)))
     if is_reserved:
         Logger.logger.info('Reservation success')
         if not is_sender:
