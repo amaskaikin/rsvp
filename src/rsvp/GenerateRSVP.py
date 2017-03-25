@@ -15,7 +15,7 @@ def generate_data(dst):
     pkt.show2()
     while True:
         send(pkt)
-        time.sleep(1)
+        time.sleep(5)
 
 
 if __name__ == '__main__':

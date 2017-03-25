@@ -13,7 +13,7 @@ def process_path(data):
         Logger.logger.info('Required bandwidth is available')
 
         if not is_last_hop:
-            send_next_hop(data)
+            send_next_hop(res_req.dst_ip, data, 'Path')
         else:
             Logger.logger.info('Path message reached the last hop')
             process_last_hop(res_req, data)
