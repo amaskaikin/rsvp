@@ -76,7 +76,7 @@ class Device:
 
     def get_available_class_id(self):
         class_id = '0'
-        for key, value in self.available_classes_ids:
+        for key, value in self.available_classes_ids.iteritems():
             if value == 'free':
                 self.available_classes_ids[key] = 'busy'
                 class_id = key
@@ -91,7 +91,19 @@ class Device:
         else:
             return False
 
+    def class_exists(self, ip_src, ip_dst, rate, tos):
+        for htb_class in self.temp_classes:
+            if (htb_class.ip_src == ip_src
+               and htb_class.ip_dst == ip_dst
+               and htb_class.rate == rate
+               and htb_class.tos == tos):
+                return htb_class
+        return False
+
     def reservation_is_available(self, ip_src, ip_dst, rate, tos):
+        class_exists = self.class_exists(ip_src, ip_dst, rate, tos)
+        if class_exists:
+            return False
         class_id = self.get_available_class_id()
         if self.bandwidth_is_available(rate) and class_id != '0':
             new_class = Class(class_id, ip_src, ip_dst, rate, tos)
@@ -102,16 +114,11 @@ class Device:
 
     def call_htb(self, ip_src, ip_dst, rate, tos):
         # check and remove temp class
-        htb_class = 0
-        for htb_class in self.temp_classes:
-            if (htb_class.ip_src == ip_src
-               and htb_class.ip_dst == ip_dst
-               and htb_class.rate == rate
-               and htb_class.tos == tos):
-                self.temp_classes.remove(htb_class)
-                break
-            else:
-                return False
+        htb_class = self.class_exists(ip_src, ip_dst, rate, tos)
+        if htb_class:
+            self.temp_classes.remove(htb_class)
+        else:
+            return False
 
         # call htb cmd
         call(['sudo', 'tc', 'class', 'add', 'dev', self.name,

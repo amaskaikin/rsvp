@@ -10,8 +10,7 @@ def process_path(data):
     Logger.logger.info('Processing Path Message. . .')
     res_req = get_reservation_info(data)
     is_available = check_reserve(res_req)
-    print is_available
-    is_last_hop = False
+    is_last_hop = res_req.dst_ip == get_current_hop(res_req.dst_ip)
     # TODO: send error message
     if is_available is True:
         Logger.logger.info('Required bandwidth is available')
@@ -58,4 +57,6 @@ def send_next_hop(data):
     ip = Const.TARGET_ADDRESS
     Logger.logger.info('Passing Path message to next hop: ' + ip)
     data.getlayer('IP').setfieldval('dst', ip)
+    get_layer(data, Const.CL_SESSION).setfieldval('Data', '192.168.0.106')
+    print get_layer(data, Const.CL_SESSION).getfieldval('Data')
     send(data)

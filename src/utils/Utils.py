@@ -40,4 +40,8 @@ def get_next_hop(ip_dst):
 
 
 def get_current_hop(ip_dst):
-    return check_output(['ip', 'route', 'get', ip_dst]).split()[4]
+    output = check_output(['ip', 'route', 'get', ip_dst]).split()
+    if output[0] == 'local':
+        return output[5]
+    else:
+        return output[4]
