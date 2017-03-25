@@ -51,23 +51,23 @@ class Device:
         else:
             return False
 
-    def reservation_is_available(self, request):
+    def reservation_is_available(self, ip_src, ip_dst, rate, tos):
         class_id = self.get_available_class_id()
-        if self.bandwidth_is_available(request.rate) and class_id != '0':
-            new_class = Class(class_id, request.ip_src, request.ip_dst, request.rate, request.tos)
+        if self.bandwidth_is_available(rate) and class_id != '0':
+            new_class = Class(class_id, ip_src, ip_dst, rate, tos)
             self.temp_classes.append(new_class)
             return True
         else:
             return False
 
-    def call_htb(self, request):
+    def call_htb(self, ip_src, ip_dst, rate, tos):
         # check and remove temp class
         htb_class = 0
         for htb_class in self.temp_classes:
-            if (htb_class.ip_src == request.ip_src
-               and htb_class.ip_dst == request.ip_dst
-               and htb_class.rate == request.rate
-               and htb_class.tos == request.tos):
+            if (htb_class.ip_src == ip_src
+               and htb_class.ip_dst == ip_dst
+               and htb_class.rate == rate
+               and htb_class.tos == tos):
                 self.temp_classes.remove(htb_class)
                 break
             else:
@@ -82,6 +82,8 @@ class Device:
         # call(['sudo', 'tc', 'qdisc', 'add', 'dev', self.name,
         #       'parent', class_id, 'handle', '20:', 'pfifo', 'limit', '5'])
         return True
+
+    # def remove(self, ip_src, ip_dst, rate, tos):
 
 
 class Class:
