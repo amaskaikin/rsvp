@@ -33,3 +33,11 @@ def get_device(ip_src):
         device = resources.get_device(device_name)
 
     return device
+
+
+def get_next_hop(ip_dst):
+    return check_output(['ip', 'route', 'get', ip_dst]).split()[0]
+
+
+def get_current_hop(ip_dst):
+    return check_output(['ip', 'route', 'get', ip_dst]).split()[4]
