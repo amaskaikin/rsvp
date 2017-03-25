@@ -8,6 +8,7 @@ import signal
 from daemon import runner
 from RSVPDaemon import MyDaemon
 from src.utils.Logger import Logger
+from src.htb.Resources import Resources
 
 extra = {'device_name': ''}
 
@@ -20,6 +21,8 @@ def run_daemon(args):
         }
         daemon_runner.daemon_context.files_preserve = [Logger.handler.stream]
         daemon_runner.do_action()
+        # create singleton instance
+        resources = Resources.Instance()
     else:
         print "usage: %s start|restart" % args[0]
         sys.exit(2)

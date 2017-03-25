@@ -1,4 +1,5 @@
 from subprocess import check_output
+from src.htb.Resources import Resources
 # TODO: import variable resources from daemon
 
 
@@ -16,6 +17,9 @@ def get_layer(data, pclass):
 
 
 def get_device(ip_src):
+    # get singleton instance
+    resources = Resources.Instance()
+
     # get device's name
     device_name = check_output(['ip', 'route', 'get', ip_src]).split()[4]
 

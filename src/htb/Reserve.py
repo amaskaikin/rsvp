@@ -1,10 +1,9 @@
 # Reserve resources
 
-from Resources import Resources
 from src.utils.Utils import *
 
 # TODO: create resources in daemon
-resources = Resources()
+# resources = Resources()
 # TODO: get next hop in daemon
 # next_hop = check_output(['ip', 'route', 'get', ip_dst]).split()[2]
 
