@@ -28,5 +28,5 @@ def process_last_hop(req, data):
         ip = get_next_hop(req.src_ip)
         data.getlayer('IP').setfieldval('dst', ip)
         get_layer(data, Const.CL_SESSION).setfieldval('Data', ip)
-        data.getlayer('HOP').setfieldval('neighbor', get_current_hop(ip))
+        get_layer(data, Const.CL_HOP)('neighbor', get_current_hop(ip))
         generate_resv(data)
