@@ -5,7 +5,7 @@ from src.rsvp.ProcessResvMsg import *
 
 def process_path(data):
     Logger.logger.info('Processing Path Message. . .')
-    res_req = get_reservation_info(data)
+    res_req = get_reservation_info(data, 'Path')
     is_available = check_reserve(res_req)
     is_last_hop = res_req.dst_ip == get_current_hop(res_req.dst_ip)
     print is_last_hop

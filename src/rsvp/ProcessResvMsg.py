@@ -25,7 +25,7 @@ def generate_resv(data):
 
 def process_resv(data):
     Logger.logger.info('Processing Resv Message. . .')
-    req = get_reservation_info(data)
+    req = get_reservation_info(data, 'Resv')
     is_reserved = reserve(req)
     is_sender = req.src_ip == get_current_hop(req.src_ip)
     Logger.logger.info(req.src_ip + ' ' + get_current_hop(req.src_ip))
