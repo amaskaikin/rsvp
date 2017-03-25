@@ -1,5 +1,10 @@
 from scapy.contrib.rsvp import *
 
+SOURCE_ADDRESS = '00192.168.0.106'
+DEST_ADDRESS = '00192.168.0.105'
+TOS = '08'
+RATE = '000100'
+
 
 class PathRSVP:
     def __init__(self):
@@ -9,5 +14,5 @@ class PathRSVP:
     SESSION = {'Data': '192.168.0.107'}
     HOP = {'neighbor': '192.168.0.108', 'inface': 3}
     TIME = {'refresh': 4}
-    SENDER_TEMPLATE = {'Data': '100192.168.0.106100192.168.0.105'}
-    ADSPEC = {'Data': '1081000100'}
+    SENDER_TEMPLATE = {'Data': '1'+SOURCE_ADDRESS+'1'+DEST_ADDRESS}
+    ADSPEC = {'Data': '1'+TOS+'1'+RATE}

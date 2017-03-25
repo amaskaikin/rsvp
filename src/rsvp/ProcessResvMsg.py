@@ -21,19 +21,25 @@ def generate_resv(data):
 
 def process_resv(data):
     Logger.logger.info('Processing Resv Message. . .')
+    ip = data.getlayer(0).getfieldval('dst')
+    is_sender = ip == get_current_hop(ip)
+    if is_sender:
+        Logger.logger.info('Resv message reached the sender.')
+        Logger.logger.info('Full Reservation completed successfully')
+        return
     req = ReservationRequest.Instance()
+    if not any((req.src_ip, req.dst_ip, req.tos, req.speed)):
+        Logger.logger.info('Error! Path is broken')
+        return
     Logger.logger.info('[Resv] Reservation request: src ip: ' + str(req.src_ip) + ', dst ip: ' + str(req.dst_ip) +
                        ', tos: ' + str(req.tos) + ', rate: ' + str(req.speed))
     # req = get_reservation_info(data, 'Resv')
     is_reserved = reserve(req)
-    is_sender = req.src_ip == get_current_hop(req.src_ip)
+    # is_sender = req.src_ip == get_current_hop(req.src_ip)
     Logger.logger.info('[Resv] : req_src ip: ' + str(req.src_ip) + ', src ip: ' + str(get_current_hop(req.src_ip)))
     if is_reserved:
         Logger.logger.info('Reservation success')
-        if not is_sender:
-            send_next_hop(req.src_ip, data, 'Resv')
-        else:
-            Logger.logger.info('Full Reservation completed successfully')
+        send_next_hop(req.src_ip, data, 'Resv')
     else:
         Logger.logger.info('Reservation failed')
 

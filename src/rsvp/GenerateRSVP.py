@@ -4,6 +4,7 @@ from scapy.all import *
 
 from GenerateRSVPMsg import *
 from RSVP_Path import *
+from src.utils.Logger import Logger
 
 
 def generate_data(dst):
@@ -13,9 +14,10 @@ def generate_data(dst):
     pkt = IP(dst=dst)/generate_msg(**rsvp_pkt)
     # pkt = IP(dst=dst) / RSVP(TTL=65, Class=0x01) / RSVP_Object(Class=0x03) / RSVP_HOP(neighbor='192.168.0.107')
     pkt.show2()
-    while True:
-        send(pkt)
-        time.sleep(5)
+    Logger.logger.info('Sending Path message to ' + DEST_ADDRESS.lstrip('0') + ' . . .')
+    # while True:
+    send(pkt)
+    # time.sleep(5)
 
 
 if __name__ == '__main__':
