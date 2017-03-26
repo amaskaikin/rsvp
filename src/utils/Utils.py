@@ -24,7 +24,11 @@ def get_device(ip_src):
     resources = Resources.Instance()
 
     # get device's name
-    device_name = check_output(['ip', 'route', 'get', ip_src]).split()[2]
+    output = check_output(['ip', 'route', 'get', ip_src]).split()
+    if output[1] == 'via':
+        device_name = output[4]
+    else:
+        device_name = output[2]
 
     # get/add device
     if resources.device_exists(device_name):
@@ -39,7 +43,11 @@ def get_device(ip_src):
 
 
 def get_next_hop(ip_dst):
-    return check_output(['ip', 'route', 'get', ip_dst]).split()[0]
+    output = check_output(['ip', 'route', 'get', ip_dst]).split()
+    if output[1] == 'via':
+        return output[2]
+    else:
+        return output[0]
 
 
 def get_current_hop(ip_dst):
