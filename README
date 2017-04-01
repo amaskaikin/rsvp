@@ -33,3 +33,8 @@ Path: /etc/network/interfaces
 	
 apt-get install virtualbox-guest-dkms
 mount -t vboxsf vboxshared shared
+
+## DISABLE NETWORK
+	service NetworkManager stop
+	dhclient -r <device_name>
+	ip a flush dev <device_name>
