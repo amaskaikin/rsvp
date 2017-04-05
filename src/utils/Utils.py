@@ -59,10 +59,40 @@ def get_current_hop(ip_dst):
 
 
 def send_next_hop(ip, data, msg_type):
+    src_ip = get_current_hop(ip)
     ip = get_next_hop(ip)
     Logger.logger.info('Passing ' + msg_type + ' message to next hop: ' + ip)
     data.getlayer('IP').setfieldval('dst', ip)
+    data.getlayer('IP').setfieldval('src', src_ip)
     get_layer(data, Const.CL_SESSION).setfieldval('Data', ip)
-    data.getlayer('HOP').setfieldval('neighbor', get_current_hop(ip))
+    data.getlayer('HOP').setfieldval('neighbor', src_ip)
+    del data.chksum
+    data = data.__class__(str(data))
+    data.show2()
     send(data)
 
+
+def get_sendtemp_data(data):
+    src_ip = None
+    dst_ip = None
+    sendtemp_layer = get_layer(data, Const.CL_SENDTEMP)
+    sendtemp_data = sendtemp_layer.getfieldval('Data')
+    if int(sendtemp_data[0]) == 1:
+        src_ip = sendtemp_data[1:16].lstrip('0')
+    if int(sendtemp_data[16]) == 1:
+        dst_ip = sendtemp_data[17:32].lstrip('0')
+
+    return {'src': src_ip, 'dst': dst_ip}
+
+
+def get_adspec_data(data):
+    tos = None
+    req_speed = None
+    adspec_layer = get_layer(data, Const.CL_ADSPEC)
+    adspec_data = adspec_layer.getfieldval('Data')
+    if int(adspec_data[0]) == 1:
+        tos = adspec_data[1:3].lstrip('0')
+    if int(adspec_data[3]) == 1:
+        req_speed = adspec_data[4:10].lstrip('0')
+
+    return {'tos': tos, 'speed': req_speed}

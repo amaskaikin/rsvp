@@ -7,7 +7,7 @@ from RSVP_Path import *
 from src.utils.Logger import Logger
 
 
-def generate_data(dst):
+def generate_path(dst):
     # Create test RSVP packet
     rsvp_pkt = dict(header=PathRSVP.HEADER, session=PathRSVP.SESSION, hop=PathRSVP.HOP, time=PathRSVP.TIME,
                     sender_template=PathRSVP.SENDER_TEMPLATE, adspec=PathRSVP.ADSPEC)
@@ -20,8 +20,19 @@ def generate_data(dst):
     # time.sleep(5)
 
 
+def generate_path_tear(dst):
+    # Create test RSVP packet
+    rsvp_pkt = dict(header=PathTearRSVP.HEADER, session=PathTearRSVP.SESSION, hop=PathTearRSVP.HOP,
+                    time=PathTearRSVP.TIME, sender_template=PathTearRSVP.SENDER_TEMPLATE, adspec=PathTearRSVP.ADSPEC)
+    pkt = IP(dst=dst)/generate_msg(**rsvp_pkt)
+    pkt.show2()
+    Logger.logger.info('Sending PathTear message to ' + DEST_ADDRESS.lstrip('0') + ' . . .')
+    send(pkt)
+
+
 if __name__ == '__main__':
     try:
-        generate_data(Const.TARGET_ADDRESS)
+        generate_path(Const.TARGET_ADDRESS)
+        generate_path_tear(Const.TARGET_ADDRESS)
     except KeyboardInterrupt:
         pass
