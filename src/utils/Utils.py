@@ -54,6 +54,8 @@ def get_current_hop(ip_dst):
     output = check_output(['ip', 'route', 'get', ip_dst]).split()
     if output[0] == 'local':
         return output[5]
+    elif output[1] == 'via':
+	    return output[6]
     else:
         return output[4]
 
