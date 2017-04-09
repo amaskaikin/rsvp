@@ -55,7 +55,7 @@ def get_current_hop(ip_dst):
     if output[0] == 'local':
         return output[5]
     elif output[1] == 'via':
-	    return output[6]
+        return output[6]
     else:
         return output[4]
 
@@ -66,8 +66,6 @@ def send_next_hop(ip, data, msg_type):
     Logger.logger.info('Passing ' + msg_type + ' message to next hop: ' + ip)
     data.getlayer('IP').setfieldval('dst', ip)
     data.getlayer('IP').setfieldval('src', src_ip)
-    get_layer(data, Const.CL_SESSION).setfieldval('Data', ip)
-    data.getlayer('HOP').setfieldval('neighbor', src_ip)
     del data.chksum
     data = data.__class__(str(data))
     data.show2()

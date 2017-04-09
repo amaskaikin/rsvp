@@ -33,6 +33,10 @@ def generate_msg(**kwargs):
             length = len(str(value.get('Data')))
             obj = dict(Class=Const.CL_STYLE, Length=length + 4)
             path_msg = path_msg/get_object(**obj)/get_data(**value)
+        if key == 'msg_id':
+            length = len(str(value.get('Data')))
+            obj = dict(Class=Const.CL_MSG_ID, Length=length + 4)
+            path_msg = path_msg/get_object(**obj)/get_data(**value)
         if key == 'flowspec':
             length = len(str(value.get('Data')))
             obj = dict(Class=Const.CL_FLOWSPEC, Length=length + 4)

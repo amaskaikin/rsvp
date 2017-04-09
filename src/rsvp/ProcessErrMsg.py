@@ -10,12 +10,9 @@ STYLE = {'Data': 'WF'}
 
 
 def generate_path_err(data, err_msg):
-    session = {'Data': get_layer(data, Const.CL_SESSION).getfieldval('Data')}
-    hop = {'neighbor': get_layer(data, Const.CL_HOP).getfieldval('neighbor'),
-           'inface': get_layer(data, Const.CL_HOP).getfieldval('inface')}
     err_spec = {'Data': err_msg}
     sender_temp = {'Data': get_layer(data, Const.CL_SENDTEMP).getfieldval('Data')}
-    rsvp_pkt = dict(header=HEADER_PATH_ERR, session=session, hop=hop, time=TIME,
+    rsvp_pkt = dict(header=HEADER_PATH_ERR, time=TIME,
                     error_spec=err_spec, sender_template=sender_temp)
     pkt = IP(dst=data.getlayer('IP').getfieldval('dst'))/generate_msg(**rsvp_pkt)
     del pkt.chksum
@@ -26,12 +23,9 @@ def generate_path_err(data, err_msg):
 
 
 def generate_resv_err(data, err_msg):
-    session = {'Data': get_layer(data, Const.CL_SESSION).getfieldval('Data')}
-    hop = {'neighbor': get_layer(data, Const.CL_HOP).getfieldval('neighbor'),
-           'inface': get_layer(data, Const.CL_HOP).getfieldval('inface')}
     err_spec = {'Data': err_msg}
     flowspec = {'Data': get_layer(data, Const.CL_ADSPEC).getfieldval('Data')}
-    rsvp_pkt = dict(header=HEADER_RESV_ERR, session=session, hop=hop, time=TIME,
+    rsvp_pkt = dict(header=HEADER_RESV_ERR, time=TIME,
                     error_spec=err_spec, style=STYLE, flowspec=flowspec)
     pkt = IP(dst=data.getlayer('IP').getfieldval('dst'))/generate_msg(**rsvp_pkt)
     del pkt.chksum
@@ -70,8 +64,6 @@ def send_error(ip, data, msg_type, msg):
     Logger.logger.info('Sending error' + msg_type + ' message to next hop: ' + ip)
     data.getlayer('IP').setfieldval('dst', ip)
     data.getlayer('IP').setfieldval('src', src_ip)
-    get_layer(data, Const.CL_SESSION).setfieldval('Data', ip)
-    data.getlayer('HOP').setfieldval('neighbor', src_ip)
     del data.chksum
     data = data.__class__(str(data))
     data.show2()

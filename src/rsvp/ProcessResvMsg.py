@@ -10,12 +10,11 @@ TIME = {'refresh': 4}
 STYLE = {'Data': 'WF'}
 
 
-def generate_resv(data):
-    session = {'Data': get_layer(data, Const.CL_SESSION).getfieldval('Data')}
-    hop = {'neighbor': get_layer(data, Const.CL_HOP).getfieldval('neighbor'),
-           'inface': get_layer(data, Const.CL_HOP).getfieldval('inface')}
-    rsvp_pkt = dict(header=HEADER_RESV, session=session, hop=hop, time=TIME,
-                    style=STYLE, flowspec={'Data': get_layer(data, Const.CL_ADSPEC).getfieldval('Data')})
+def generate_resv(data, req_id):
+    flowspec = {'Data': get_layer(data, Const.CL_ADSPEC).getfieldval('Data')}
+    msg_id = {'Data': req_id}
+    rsvp_pkt = dict(header=HEADER_RESV, time=TIME,
+                    style=STYLE, flowspec=flowspec, msg_id=msg_id)
     pkt = IP(dst=data.getlayer('IP').getfieldval('dst'))/generate_msg(**rsvp_pkt)
     del pkt.chksum
     pkt = pkt.__class__(str(pkt))
@@ -25,10 +24,7 @@ def generate_resv(data):
 
 
 def generate_resv_tear(data):
-    session = {'Data': get_layer(data, Const.CL_SESSION).getfieldval('Data')}
-    hop = {'neighbor': get_layer(data, Const.CL_HOP).getfieldval('neighbor'),
-           'inface': get_layer(data, Const.CL_HOP).getfieldval('inface')}
-    rsvp_pkt = dict(header=HEADER_RTEAR, session=session, hop=hop, time=TIME,
+    rsvp_pkt = dict(header=HEADER_RTEAR, time=TIME,
                     style=STYLE, flowspec={'Data': get_layer(data, Const.CL_ADSPEC).getfieldval('Data')})
     pkt = IP(dst=data.getlayer('IP').getfieldval('dst'))/generate_msg(**rsvp_pkt)
     pkt.show2()

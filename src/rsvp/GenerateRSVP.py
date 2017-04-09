@@ -9,7 +9,7 @@ from src.utils.Logger import Logger
 
 def generate_path(dst):
     # Create test RSVP packet
-    rsvp_pkt = dict(header=PathRSVP.HEADER, session=PathRSVP.SESSION, hop=PathRSVP.HOP, time=PathRSVP.TIME,
+    rsvp_pkt = dict(header=PathRSVP.HEADER, time=PathRSVP.TIME,
                     sender_template=PathRSVP.SENDER_TEMPLATE, adspec=PathRSVP.ADSPEC)
     pkt = IP(dst=dst)/generate_msg(**rsvp_pkt)
     # pkt = IP(dst=dst) / RSVP(TTL=65, Class=0x01) / RSVP_Object(Class=0x03) / RSVP_HOP(neighbor='192.168.0.107')
@@ -22,7 +22,7 @@ def generate_path(dst):
 
 def generate_path_tear(dst):
     # Create test RSVP packet
-    rsvp_pkt = dict(header=PathTearRSVP.HEADER, session=PathTearRSVP.SESSION, hop=PathTearRSVP.HOP,
+    rsvp_pkt = dict(header=PathTearRSVP.HEADER,
                     time=PathTearRSVP.TIME, sender_template=PathTearRSVP.SENDER_TEMPLATE, adspec=PathTearRSVP.ADSPEC)
     pkt = IP(dst=dst)/generate_msg(**rsvp_pkt)
     pkt.show2()

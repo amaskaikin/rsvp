@@ -9,7 +9,6 @@ def process_path(data):
     res_req = get_reservation_info(data)
     is_available = check_reserve(res_req)
     is_last_hop = res_req.dst_ip == get_current_hop(res_req.dst_ip)
-    # TODO: send error message
     if is_available:
         Logger.logger.info('Required bandwidth is available')
         if not is_last_hop:
@@ -45,15 +44,14 @@ def process_path_tear(data):
 def process_path_last_hop(req, data):
     Logger.logger.info('Processing Last Path Hop. . .')
     is_reserved = reserve(req)
+    req_id = 1
     if is_reserved:
         Logger.logger.info('Reservation success')
         ip = get_next_hop(req.src_ip)
         src_ip = get_current_hop(req.src_ip)
         data.getlayer('IP').setfieldval('dst', ip)
         data.getlayer('IP').setfieldval('src', src_ip)
-        get_layer(data, Const.CL_SESSION).setfieldval('Data', ip)
-        get_layer(data, Const.CL_HOP).setfieldval('neighbor', src_ip)
-        generate_resv(data)
+        generate_resv(data, req_id)
     else:
         Logger.logger.info('Reservation failed for request: src ip: ' + req.src_ip +
                            ', dst ip: ' + req.dst_ip +
@@ -72,8 +70,6 @@ def process_pathtear_last_hop(req, data):
         src_ip = get_current_hop(req.src_ip)
         data.getlayer('IP').setfieldval('dst', ip)
         data.getlayer('IP').setfieldval('src', src_ip)
-        get_layer(data, Const.CL_SESSION).setfieldval('Data', ip)
-        get_layer(data, Const.CL_HOP).setfieldval('neighbor', src_ip)
         generate_resv(data)
     else:
         Logger.logger.info('Destroying failed for request: src ip: ' + req.src_ip +

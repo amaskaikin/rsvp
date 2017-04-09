@@ -13,5 +13,6 @@ class Const:
     CL_SENDTEMP = 0x0B
     CL_STYLE = 0x08
     CL_FLOWSPEC = 0x09
+    CL_MSG_ID = 0x17
 
     BANDWIDTH = 1000

@@ -11,8 +11,8 @@ class PathRSVP:
         pass
 
     HEADER = {'TTL': 65, 'Class': rsvpmsgtypes.get(0x01)}
-    SESSION = {'Data': '192.168.0.100'}
-    HOP = {'neighbor': '192.168.0.109', 'inface': 3}
+    # SESSION = {'Data': '192.168.0.100'}
+    # HOP = {'neighbor': '192.168.0.109', 'inface': 3}
     TIME = {'refresh': 4}
     SENDER_TEMPLATE = {'Data': '1'+SOURCE_ADDRESS+'1'+DEST_ADDRESS}
     ADSPEC = {'Data': '1'+TOS+'1'+RATE}
