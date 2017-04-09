@@ -4,6 +4,7 @@ from Const import *
 from Logger import *
 from src.data.ReservationRequest import *
 from scapy.all import *
+import re
 
 
 def get_layer(data, pclass):
@@ -96,3 +97,11 @@ def get_adspec_data(data):
         req_speed = adspec_data[4:10].lstrip('0')
 
     return {'tos': tos, 'speed': req_speed}
+
+
+def generate_unique_key(ip_src, ip_dst, rate, tos):
+    return '_'.join([ip_src, ip_dst, str(rate), str(tos)])
+
+
+def parse_unique_key(key):
+    return re.findall(r'[0-9]+(?:\.[0-9]+){3}', key)[0]

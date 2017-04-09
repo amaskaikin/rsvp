@@ -3,6 +3,7 @@
 from subprocess import call
 from src.utils.Const import *
 from src.utils.Singleton import *
+from src.utils.Utils import *
 
 
 @Singleton
@@ -27,7 +28,7 @@ class Device:
     def __init__(self, name):
         self.name = name
         self.bandwidth = Const.BANDWIDTH
-        self.temp_classes = []
+        self.classes = []
         self.available_classes_ids = {'10': 'free', '20': 'free', '30': 'free',
                                       '40': 'free', '50': 'free', '60': 'free',
                                       '70': 'free', '80': 'free', '90': 'free'}
@@ -51,33 +52,38 @@ class Device:
         else:
             return False
 
-    def class_exists(self, ip_src, ip_dst, rate, tos):
-        for htb_class in self.temp_classes:
-            if (htb_class.ip_src == ip_src
-               and htb_class.ip_dst == ip_dst
-               and htb_class.rate == rate
-               and htb_class.tos == tos):
+    def class_exists(self, key):
+        for htb_class in self.classes:
+            if htb_class.key == key:
                 return htb_class
         return False
 
+    def class_reserved(self, key):
+        for htb_class in self.classes:
+            if htb_class.key == key:
+                return htb_class.reserved
+        return False
+
     def reservation_is_available(self, ip_src, ip_dst, rate, tos):
-        if not self.bandwidth_is_available(rate) or self.class_exists(ip_src, ip_dst, rate, tos):
-            return False
+        key = generate_unique_key(ip_src, ip_dst, rate, tos)
+        if not self.bandwidth_is_available(rate) or self.class_reserved(key):
+            return False, None
         class_id = self.get_available_class_id()
         if class_id:
-            new_class = Class(class_id, ip_src, ip_dst, rate, tos)
-            self.temp_classes.append(new_class)
-            return True
+            key = generate_unique_key(ip_src, ip_dst, rate, tos)
+            new_class = Class(key, class_id, ip_src, ip_dst, rate, tos)
+            self.classes.append(new_class)
+            return True, key
         else:
+            return False, None
+
+    def call_htb(self, key):
+        htb_class = self.class_exists(key)
+        if not htb_class or htb_class.reserved:
             return False
 
-    def call_htb(self, ip_src, ip_dst, rate, tos):
-        # check and remove temp class
-        htb_class = self.class_exists(ip_src, ip_dst, rate, tos)
-        if htb_class:
-            self.temp_classes.remove(htb_class)
-        else:
-            return False
+        # make class reserved
+        htb_class.reserved = True
 
         # call htb cmd
         call(['sudo', 'tc', 'class', 'add', 'dev', self.name,
@@ -93,9 +99,11 @@ class Device:
 
 
 class Class:
-    def __init__(self, class_id, ip_src, ip_dst, rate, tos):
+    def __init__(self, key, class_id, ip_src, ip_dst, rate, tos):
+        self.key = key
         self.class_id = class_id
         self.ip_src = ip_src
         self.ip_dst = ip_dst
         self.rate = rate
         self.tos = tos
+        self.reserved = False
