@@ -34,13 +34,16 @@ def generate_resv_tear(data):
 
 def process_resv(data):
     Logger.logger.info('Processing Resv Message. . .')
+    # TODO: move logic to htb, get request parameters from there by id
+    id = get_layer(data, Const.CL_MSG_ID).getfieldval('Data')
+    req = ReservationRequest.Instance()
     ip = data.getlayer(0).getfieldval('dst')
-    is_sender = ip == get_current_hop(ip)
+    # TODO: register request in htb on the first daemon
+    is_sender = ip == req.src_ip
     if is_sender:
         Logger.logger.info('Resv message reached the sender.')
         Logger.logger.info('Full Reservation completed successfully')
         return
-    req = ReservationRequest.Instance()
     if not any((req.src_ip, req.dst_ip, req.tos, req.speed)):
         Logger.logger.info('Error! Path is broken')
         return

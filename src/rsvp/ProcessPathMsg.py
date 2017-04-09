@@ -45,6 +45,7 @@ def process_path_last_hop(req, data):
     Logger.logger.info('Processing Last Path Hop. . .')
     is_reserved = reserve(req)
     req_id = 1
+    # TODO: get request id from htb
     if is_reserved:
         Logger.logger.info('Reservation success')
         ip = get_next_hop(req.src_ip)
@@ -64,6 +65,7 @@ def process_pathtear_last_hop(req, data):
     Logger.logger.info('Processing Last PathTear Hop. . .')
     # TODO: call destroy method
     is_destroyed = reserve(req)
+    req_id = 1
     if is_destroyed:
         Logger.logger.info('Destroyed successfully')
         ip = get_next_hop(req.src_ip)
