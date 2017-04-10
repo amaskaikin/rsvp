@@ -1,9 +1,9 @@
 # System resources class
 
 from subprocess import call
+
 from src.utils.Const import *
 from src.utils.Singleton import *
-from src.utils.Utils import *
 
 
 @Singleton
@@ -65,12 +65,12 @@ class Device:
         return False
 
     def reservation_is_available(self, ip_src, ip_dst, rate, tos):
-        key = generate_unique_key(ip_src, ip_dst, rate, tos)
+        key = self.generate_unique_key(ip_src, ip_dst, rate, tos)
         if not self.bandwidth_is_available(rate) or self.class_reserved(key):
             return False, None
         class_id = self.get_available_class_id()
         if class_id:
-            key = generate_unique_key(ip_src, ip_dst, rate, tos)
+            key = self.generate_unique_key(ip_src, ip_dst, rate, tos)
             new_class = Class(key, class_id, ip_src, ip_dst, rate, tos)
             self.classes.append(new_class)
             return True, key
@@ -95,7 +95,11 @@ class Device:
         #       'parent', class_id, 'handle', '20:', 'pfifo', 'limit', '5'])
         return True
 
-    # def remove(self, ip_src, ip_dst, rate, tos):
+    @staticmethod
+    def generate_unique_key(ip_src, ip_dst, rate, tos):
+        return '_'.join([ip_src, ip_dst, str(rate), str(tos)])
+
+        # def remove(self, ip_src, ip_dst, rate, tos):
 
 
 class Class:

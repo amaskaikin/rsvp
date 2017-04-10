@@ -58,7 +58,8 @@ def process_resv_err(data):
     send_next_hop(req.src_ip, data, 'ResvErr')
 
 
-def send_error(ip, data, msg_type, msg):
+def send_error(ip, data, msg, msg_type):
+    Logger.logger.info('[send_error] ' + ip)
     src_ip = get_current_hop(ip)
     ip = get_next_hop(ip)
     Logger.logger.info('Sending error' + msg_type + ' message to next hop: ' + ip)
@@ -66,7 +67,6 @@ def send_error(ip, data, msg_type, msg):
     data.getlayer('IP').setfieldval('src', src_ip)
     del data.chksum
     data = data.__class__(str(data))
-    data.show2()
     if msg_type == 'path':
         generate_path_err(data, msg)
     else:

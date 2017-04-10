@@ -99,9 +99,5 @@ def get_adspec_data(data):
     return {'tos': tos, 'speed': req_speed}
 
 
-def generate_unique_key(ip_src, ip_dst, rate, tos):
-    return '_'.join([ip_src, ip_dst, str(rate), str(tos)])
-
-
 def parse_unique_key(key):
     return re.findall(r'[0-9]+(?:\.[0-9]+){3}', key)[0]
