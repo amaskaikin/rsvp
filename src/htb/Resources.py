@@ -64,23 +64,36 @@ class Device:
                 return htb_class.reserved
         return False
 
+    @staticmethod
+    def generate_unique_key(ip_src, ip_dst, rate, tos):
+        return '_'.join([ip_src, ip_dst, str(rate), str(tos)])
+
     def reservation_is_available(self, ip_src, ip_dst, rate, tos):
         key = self.generate_unique_key(ip_src, ip_dst, rate, tos)
-        if not self.bandwidth_is_available(rate) or self.class_reserved(key):
-            return False, None
+
+        # errors
+        if not self.bandwidth_is_available(rate):
+            return False, Const.ERRORS[1]
+        if self.class_reserved(key):
+            return False, Const.ERRORS[2]
         class_id = self.get_available_class_id()
-        if class_id:
-            key = self.generate_unique_key(ip_src, ip_dst, rate, tos)
-            new_class = Class(key, class_id, ip_src, ip_dst, rate, tos)
-            self.classes.append(new_class)
-            return True, key
-        else:
-            return False, None
+        if not class_id:
+            return False, Const.ERRORS[3]
+
+        # create class
+        key = self.generate_unique_key(ip_src, ip_dst, rate, tos)
+        new_class = Class(key, class_id, ip_src, ip_dst, rate, tos)
+        self.classes.append(new_class)
+        return True, key
 
     def call_htb(self, key):
         htb_class = self.class_exists(key)
-        if not htb_class or htb_class.reserved:
-            return False
+
+        # errors
+        if not htb_class:
+            return False, Const.ERRORS[4]
+        if htb_class.reserved:
+            return False, Const.ERRORS[5]
 
         # make class reserved
         htb_class.reserved = True
@@ -93,13 +106,26 @@ class Device:
               'match', 'ip', 'tos', htb_class.tos, 'flowid', htb_class.class_id])
         # call(['sudo', 'tc', 'qdisc', 'add', 'dev', self.name,
         #       'parent', class_id, 'handle', '20:', 'pfifo', 'limit', '5'])
-        return True
 
-    @staticmethod
-    def generate_unique_key(ip_src, ip_dst, rate, tos):
-        return '_'.join([ip_src, ip_dst, str(rate), str(tos)])
+        return True, htb_class.ip_src, htb_class.ip_dst, htb_class.rate, htb_class.tos
 
-        # def remove(self, ip_src, ip_dst, rate, tos):
+    def remove(self, key):
+        htb_class = self.class_exists(key)
+
+        # errors
+        if not htb_class:
+            return False, Const.ERRORS[4]
+        if not htb_class.reserved:
+            return False, Const.ERRORS[6]
+
+        # make class unreserved
+        htb_class.reserved = False
+
+        # call htb cmd
+        call(['sudo', 'tc', 'class', 'del', 'dev', self.name,
+              'parent', '1:1', 'classid', htb_class.class_id])
+
+        return True, ''
 
 
 class Class:

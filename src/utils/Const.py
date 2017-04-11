@@ -16,3 +16,12 @@ class Const:
     CL_MSG_ID = 0x17
 
     BANDWIDTH = 1000
+
+    ERRORS = {
+        1: 'Bandwidth is not available',
+        2: 'Device already has reservation for this htb class',
+        3: 'There is no available htb classes',
+        4: 'Htb class does not exist',
+        5: 'Htb class is already reserved',
+        6: 'Htb class is not reserved'
+    }
