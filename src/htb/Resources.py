@@ -107,7 +107,7 @@ class Device:
         # call(['sudo', 'tc', 'qdisc', 'add', 'dev', self.name,
         #       'parent', class_id, 'handle', '20:', 'pfifo', 'limit', '5'])
 
-        return True, htb_class.ip_src, htb_class.ip_dst, htb_class.rate, htb_class.tos
+        return True, [htb_class.ip_src, htb_class.ip_dst, htb_class.rate, htb_class.tos]
 
     def remove(self, key):
         htb_class = self.class_exists(key)
