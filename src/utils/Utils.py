@@ -20,16 +20,23 @@ def get_layer(data, pclass):
         cnt += 1
 
 
-def get_device(ip_src):
+def get_device_instance(ip_src):
     # get singleton instance
     resources = Resources.Instance()
 
     # get device's name
     output = check_output(['ip', 'route', 'get', ip_src]).split()
-    if output[1] == 'via':
+
+    if output[0] == 'local':
+        device_name = output[3]
+    elif output[1] == 'via':
         device_name = output[4]
     else:
         device_name = output[2]
+
+    # workaround
+    if device_name == 'lo':
+        device_name = 'enp11s0'
 
     # get/add device
     if resources.device_exists(device_name):
