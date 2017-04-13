@@ -70,7 +70,9 @@ def get_current_hop(ip_dst):
 
 def send_next_hop(ip, data, msg_type):
     src_ip = get_current_hop(ip)
+    Logger.logger.info('src' + src_ip)
     ip = get_next_hop(ip)
+    Logger.logger.info('dst' + ip)
     Logger.logger.info('Passing ' + msg_type + ' message to next hop: ' + ip)
     data.getlayer('IP').setfieldval('dst', ip)
     data.getlayer('IP').setfieldval('src', src_ip)
@@ -101,7 +103,7 @@ def get_adspec_data(data):
     if int(adspec_data[0]) == 1:
         tos = adspec_data[1:3].lstrip('0')
     if int(adspec_data[3]) == 1:
-        req_speed = adspec_data[4:10].lstrip('0')
+        req_speed = adspec_data[4:12].lstrip('0')
 
     return {'tos': tos, 'speed': req_speed}
 

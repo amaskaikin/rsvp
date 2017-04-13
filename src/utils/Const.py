@@ -2,7 +2,7 @@ class Const:
     def __init__(self):
         pass
 
-    TARGET_ADDRESS = '192.168.0.106'
+    TARGET_ADDRESS = '1.1.1.2'
 
     CL_SESSION = 0x01
     CL_HOP = 0x03
@@ -15,7 +15,7 @@ class Const:
     CL_FLOWSPEC = 0x09
     CL_MSG_ID = 0x17
 
-    BANDWIDTH = 1000
+    BANDWIDTH = 10000000
 
     ERRORS = {
         1: 'Bandwidth is not available',

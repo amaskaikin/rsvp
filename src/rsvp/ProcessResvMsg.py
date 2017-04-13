@@ -41,6 +41,7 @@ def process_resv(data):
     # req = get request parameters from htb by id
     # req.src_ip, req.dst_ip, req.tos, req.speed = ...
     is_class, ret = get_class(key)
+    
     if is_class:     
         req.src_ip = ret[0]
         req.dst_ip = ret[1]
@@ -51,6 +52,7 @@ def process_resv(data):
         ip = data.getlayer(0).getfieldval('dst')
         is_sender = ip == req.src_ip
         if is_sender:
+            Logger.logger.info('is reserved ' + str(reserve(key)[0]))
             Logger.logger.info('Resv message reached the sender.')
             Logger.logger.info('Full Reservation completed successfully')
             return
@@ -60,11 +62,11 @@ def process_resv(data):
             send_error(req.src_ip, data, error_msg, 'resv')
             return
     else:
-        Logger.logger.info('Htb class not found')
+        Logger.logger.info(ret)
         error_msg = str(get_current_hop(req.src_ip)) + ret
         send_error(req.src_ip, data, error_msg, 'resv')
         return
-    is_reserved, ret = reserve(req)
+    is_reserved, ret = reserve(key)
     Logger.logger.info('[Resv] : req_src ip: ' + str(req.src_ip) + ', src ip: ' + str(get_current_hop(req.src_ip)))
     if is_reserved:
         Logger.logger.info('Reservation success')
