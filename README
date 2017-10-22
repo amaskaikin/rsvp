@@ -1,40 +1,41 @@
+## INSTALLATION NOTES
 ## NECESSARY MODULES TO BE IMPORTED
 	apt-get -y install python-daemon
 	apt-get -y install python-lockfile
 	apt-get -y install python-scapy
 
 ## FOR GENERATING RSVP PACKAGES
-To import contrib package, which contains rsvp class:
+	# To import contrib package, which contains rsvp class:
 	https://github.com/levigross/Scapy/blob/master/scapy/contrib/rsvp.py # RSVP
 	
 	$ mkdir /usr/lib/python2.7/dist-packages/scapy/contrib
 	$ cp rsvp.py /usr/lib/python2.7/dist-packages/scapy/contrib/
 	$ touch /usr/lib/python2.7/dist-packages/scapy/contrib/__init__.py
 	
-## ENABLE IP FORWARDING
+## ENABLE IP FORWARDING ON MIDDLE INSTANCE
 	$ echo 1 > /proc/sys/net/ipv4/ip_forward
-
-## FOR CONFIGURING UBUNTU SERVER
-	apt-get install openssh-server
-	passwd root
-	service ssh restart
-Change file /etc/ssh/sshd_config
-	set PermitRootLogin to yes
-	set PermitEmptyPasswords to yes (may be unnecessary)
-
-# The host-only network interface
-Path: /etc/network/interfaces
-	auto enp0s8
-	iface enp0s8 inet static
-	address 192.168.56.101
-	netmask 255.255.255.0
-	network 192.168.56.0
-	broadcast 192.168.56.255
 	
-apt-get install virtualbox-guest-dkms
-mount -t vboxsf vboxshared shared
-
-## DISABLE NETWORK
-	service NetworkManager stop
-	dhclient -r <device_name>
-	ip a flush dev <device_name>
+## VERY STUPID WORKAROUND (WILL BE FIXED SOON)
+	# ON ALL INSTANCES
+	mkdir res
+	touch res/my_daemon.log
+	Note: "res" directory should be at the same level as "src"
+	# ON FIRST INSTANCE (SENDER)
+	Change variable device_name in utils.Utils.py (str.#39) to the name of current interface (device)
+	# ON OTHER INSTANCES
+	Comment string #30 in daemon.RSVPDaemon.py
+	
+## RUNNING THE APPLICATION
+	# On all instances run daemon process by executing the following command:
+	python -m src.daemon.RunDaemon start
+	
+	# Send test RSVP message via command:
+	python -m src.rsvp.GenerateRSVP
+	
+	
+## CONFIGURATION
+	# RSVP Path parameters are configured in /rsvp/RSVP_Path.py
+	SOURCE_ADDRESS and DEST_ADDRESS should have leading zeros insteadof absent digits in ip address. Ex: 128.68.1.1 should be filled as 00000128.68.1.1
+	TOS: is two digit number and should have leading zero if it has only one digit. Ex.: 08
+	RATE: required bandwidth in bit/s
+	# Set TARGET_ADDRESS in utils/Const.py to determine where packets should be send
