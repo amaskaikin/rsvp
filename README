@@ -1,4 +1,5 @@
 ## INSTALLATION NOTES
+
 ## NECESSARY MODULES TO BE IMPORTED
 	apt-get -y install python-daemon
 	apt-get -y install python-lockfile
@@ -15,10 +16,10 @@
 ## ENABLE IP FORWARDING ON MIDDLE INSTANCE
 	$ echo 1 > /proc/sys/net/ipv4/ip_forward
 	
-## VERY STUPID WORKAROUND (WILL BE FIXED SOON)
+## WORKAROUNDS (WILL BE FIXED SOON)
 	# ON ALL INSTANCES
-	mkdir res
-	touch res/my_daemon.log
+	$ mkdir res
+	$ touch res/my_daemon.log
 	Note: "res" directory should be at the same level as "src"
 	# ON FIRST INSTANCE (SENDER)
 	Change variable device_name in utils.Utils.py (str.#39) to the name of current interface (device)
@@ -29,7 +30,7 @@
 	# On all instances run daemon process by executing the following command:
 	python -m src.daemon.RunDaemon start
 	
-	# Send test RSVP message via command:
+	# Send test RSVP message from first instance via command:
 	python -m src.rsvp.GenerateRSVP
 	
 	
