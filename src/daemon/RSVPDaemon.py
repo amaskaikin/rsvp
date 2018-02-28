@@ -2,10 +2,9 @@
 
 
 from RSVPSniffer import *
-from src.utils.Logger import Logger
-from src.data.ReservationRequest import *
+from src.data.ReservationRequest import ReservationRequest
 from src.htb.Reserve import *
-from src.rsvp.RSVP_Path import *
+from src.rsvp.model.RSVP_Path import *
 
 
 class MyDaemon:
@@ -27,5 +26,5 @@ class MyDaemon:
         req.dst_ip = DEST_ADDRESS.lstrip('0')
         req.tos = int(TOS)
         req.speed = int(RATE)
-        b, r = check_reserve(req)
+        # b, r = check_reserve(req)
         catch_packet()

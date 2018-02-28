@@ -1,4 +1,4 @@
-from RSVPBuilder import *
+from src.rsvp.RSVPBuilder import *
 from src.utils.Const import Const
 
 

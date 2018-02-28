@@ -71,6 +71,9 @@ class Device:
 
     def reservation_is_available(self, ip_src, ip_dst, rate, tos):
         key = self.generate_unique_key(ip_src, ip_dst, rate, tos)
+        
+        # stub for testing PathErr
+        # return False, key
 
         # errors
         if not self.bandwidth_is_available(rate):
@@ -100,6 +103,9 @@ class Device:
 
     def call_htb(self, key):
         htb_class = self.class_exists(key)
+
+        # stub for testing ResvErr
+        # return False, Const.ERRORS[4]
         
         # errors
         if not htb_class:

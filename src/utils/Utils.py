@@ -2,7 +2,6 @@ from subprocess import check_output
 from src.htb.Resources import Resources
 from Const import *
 from Logger import *
-from src.data.ReservationRequest import *
 from scapy.all import *
 import re
 
@@ -36,7 +35,7 @@ def get_device_instance(ip_src):
 
     # workaround
     if device_name == 'lo':
-        device_name = 'enp11s0'
+        device_name = 'enp0s3'
 
     # get/add device
     if resources.device_exists(device_name):

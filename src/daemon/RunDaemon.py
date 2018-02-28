@@ -1,15 +1,13 @@
 # Usage: python ./RunDaemon.py start|stop|restart device
 
-import logging
-import os
-import sys
 import signal
-
+import sys
 from daemon import runner
+
 from RSVPDaemon import MyDaemon
-from src.utils.Logger import Logger
-from src.htb.Resources import Resources
 from src.data.ReservationRequest import ReservationRequest
+from src.htb.Resources import Resources
+from src.utils.Logger import Logger
 
 extra = {'device_name': ''}
 
