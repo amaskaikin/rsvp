@@ -1,5 +1,5 @@
 # Generate RSVP data
-
+import argparse
 from GenerateRSVPMsg import *
 from src.htb.Reserve import *
 from src.rsvp.model.RSVP_Path import *
@@ -13,10 +13,10 @@ HEADER_PATH_ERR = {'TTL': 65, 'Class': rsvpmsgtypes.get(0x03)}
 HEADER_RESV_ERR = {'TTL': 65, 'Class': rsvpmsgtypes.get(0x04)}
 
 
-def generate_path(dst):
+def generate_path(path_msg, dst):
     # Create test RSVP packet
-    rsvp_pkt = dict(header=PathRSVP.HEADER, time=PathRSVP.TIME,
-                    sender_template=PathRSVP.SENDER_TEMPLATE, adspec=PathRSVP.ADSPEC)
+    rsvp_pkt = dict(header=path_msg.header_obj, time=path_msg.time,
+                    sender_template=path_msg.sender_template, adspec=path_msg.adspec, scope=path_msg.route_obj)
     pkt = IP(dst=dst)/generate_msg(**rsvp_pkt)
     # pkt = IP(dst=dst) / RSVP(TTL=65, Class=0x01) / RSVP_Object(Class=0x03) / RSVP_HOP(neighbor='192.168.0.107')
     pkt.show2()
@@ -87,7 +87,17 @@ def generate_resv_tear(data, key):
 
 if __name__ == '__main__':
     try:
-        generate_path(Const.TARGET_ADDRESS)
+        parser = argparse.ArgumentParser()
+        parser.add_argument('-src', '--source_ip', dest='src_ip', required=True)
+        parser.add_argument('-dst', '--dest_ip', dest='dst_ip', required=True)
+        parser.add_argument('-tos', '--tos', dest='tos', required=True)
+        parser.add_argument('-rate', '--bandwidth_rate', dest='rate', required=True)
+        parser.add_argument('-route', nargs='+', dest='route')
+        parser.add_argument('-ifaces', nargs='+', dest='ifaces')
+
+        parsed = parser.parse_args()  # parses sys.argv by default
+        rsvp = PathRSVP(parsed.src_ip, parsed.dst_ip, parsed.tos, parsed.rate, parsed.route, parsed.ifaces)
+        generate_path(rsvp, parsed.dst_ip)
         # generate_path_tear(Const.TARGET_ADDRESS)
     except KeyboardInterrupt:
         pass

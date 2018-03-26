@@ -29,6 +29,11 @@ def generate_msg(**kwargs):
             length = len(str(value.get('Data')))
             obj = dict(Class=Const.CL_SENDTEMP, Length=length + 4)
             path_msg = path_msg/get_object(**obj)/get_data(**value)
+        if key == 'scope':
+            print value
+            length = len(str(value.get('Data')))
+            obj = dict(Class=Const.CL_SCOPE, Length=length + 4)
+            path_msg = path_msg/get_object(**obj)/get_data(**value)
         if key == 'style':
             length = len(str(value.get('Data')))
             obj = dict(Class=Const.CL_STYLE, Length=length + 4)

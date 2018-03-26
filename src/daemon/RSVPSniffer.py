@@ -28,6 +28,7 @@ def process_packet(pkt):
     data = IP(pkt)
     rsvp_class = data.getlayer('RSVP').getfieldval('Class')
     if rsvp_class == 0x01:
+        # TODO: check is next interface exists in packet data
         callback = process_path(data)
         process_callback(callback, lambda: process_path_last_hop(callback.request, callback.data, callback.key))
     if rsvp_class == 0x02:
