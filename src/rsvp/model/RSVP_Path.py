@@ -1,21 +1,11 @@
 from scapy.contrib.rsvp import *
 
+from src.utils.Utils import format_address, format_route
+
 SOURCE_ADDRESS = '000000001.1.1.1'
 DEST_ADDRESS = '000000001.1.2.2'
 TOS = '08'
 RATE = '6000000'
-
-
-def format_address(ip):
-    return ip.zfill(15)
-
-
-def format_route(route):
-    formatted_route = []
-    for ip in route:
-        formatted_route.append(format_address(ip))
-
-    return formatted_route
 
 
 class PathRSVP:
@@ -33,7 +23,7 @@ class PathRSVP:
         self.time = {'refresh': 4}
         self.sender_template = {'Data': '1'+self.src_ip+'1'+self.dst_ip}
         self.adspec = {'Data': '1'+self.tos+'1'+self.rate}
-        self.route_obj = {'Data': '1'.join(self.route)}
+        self.route_obj = {'Data': '1' + '1'.join(self.route)}
 
 
 class PathTearRSVP:

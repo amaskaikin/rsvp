@@ -2,7 +2,7 @@
 
 class Callback:
     def __init__(self, request=None, data=None, key=None, result=None, is_next=None,
-                 next_label=None, direction=None, error=None):
+                 next_label=None, direction=None, error=None, is_static=None):
         self.request = request
         self.data = data
         self.key = key
@@ -11,3 +11,4 @@ class Callback:
         self.next_label = next_label
         self.direction = direction
         self.error = error
+        self.is_static = is_static

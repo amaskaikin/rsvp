@@ -56,7 +56,7 @@ def process_callback(callback, lasthop_processor):
             else:
                 execute_callback_command(callback, func)
         else:
-            send_next_hop(callback.direction, callback.data, callback.next_label)
+            send_next_hop(callback.direction, callback.data, callback.next_label, callback.is_static)
     else:
         send_error(callback.request.src_ip, callback.data, callback.error)
 
