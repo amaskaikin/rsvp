@@ -1,6 +1,6 @@
 from subprocess import check_output
 from src.htb.Resources import Resources
-from Logger import *
+from .Logger import *
 from scapy.all import *
 import re
 

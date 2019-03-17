@@ -1,6 +1,6 @@
 # Generate RSVP data
 import argparse
-from GenerateRSVPMsg import *
+from .GenerateRSVPMsg import *
 from src.htb.Reserve import *
 from src.rsvp.model.RSVP_Path import *
 from src.utils.RSVPDataHelper import get_layer

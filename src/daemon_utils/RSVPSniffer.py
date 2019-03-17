@@ -11,17 +11,17 @@ from src.rsvp.processor.ProcessResvMsg import process_resv, process_resv_tear
 
 def catch_packet():
     sock = socket.socket(socket.AF_INET, socket.SOCK_RAW, socket.IPPROTO_RSVP)
-    print "Socket created"
+    print("Socket created")
     try:
         while 1:
-            print "Waiting..."
+            print("Waiting...")
             pkt = sock.recv(2048)
-            print "Received..."
+            print("Received...")
 #            modify_packet(pkt)
             process_packet(pkt)
 
     except KeyboardInterrupt:
-        print "The loop was interrupted. Sniffer exiting"
+        print("The loop was interrupted. Sniffer exiting")
 
 
 def process_packet(pkt):
@@ -68,5 +68,3 @@ def execute_callback_command(callback, func):
         generate_resv(callback.data, callback.key)
     if func == CallbackCommands.GENERATE_RESV_TEAR:
         generate_resv_tear(callback.data, callback.key)
-
-

@@ -39,7 +39,7 @@ class Device:
               'parent', '1:', 'classid', '1:1', 'htb', 'rate', str(self.bandwidth)])
 
     def get_available_class_id(self):
-        for key, value in self.available_classes_ids.iteritems():
+        for key, value in self.available_classes_ids.items():
             if value == 'free':
                 self.available_classes_ids[key] = 'busy'
                 return key
@@ -57,13 +57,13 @@ class Device:
         for htb_class in self.classes:
             if htb_class.key == key:
                 return htb_class
-        return False
+        return None
 
     def class_reserved(self, key):
         for htb_class in self.classes:
             if htb_class.key == key:
                 return htb_class.reserved
-        return False
+        return None
 
     @staticmethod
     def generate_unique_key(ip_src, ip_dst, rate, tos):
@@ -78,7 +78,7 @@ class Device:
         # errors
         if not self.bandwidth_is_available(rate):
             return False, Const.ERRORS[1]
-        if self.class_reserved(key):
+        if self.class_reserved(key) is not None:
             return False, Const.ERRORS[2]
         class_id = self.get_available_class_id()
         if not class_id:
@@ -94,7 +94,7 @@ class Device:
         htb_class = self.class_exists(key)
 
         # errors
-        if not htb_class:
+        if htb_class is None:
             return False, Const.ERRORS[4]
         if htb_class.reserved:
             return False, Const.ERRORS[5]
@@ -108,7 +108,7 @@ class Device:
         # return False, Const.ERRORS[4]
         
         # errors
-        if not htb_class:
+        if htb_class is None:
             return False, Const.ERRORS[4]
         if htb_class.reserved:
             return False, Const.ERRORS[5]
@@ -133,7 +133,7 @@ class Device:
         htb_class = self.class_exists(key)
 
         # errors
-        if not htb_class:
+        if htb_class is None:
             return False, Const.ERRORS[4]
         if not htb_class.reserved:
             return False, Const.ERRORS[6]

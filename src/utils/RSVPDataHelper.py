@@ -51,7 +51,7 @@ def get_scope_data(data):
     if scope_layer is None:
         return None
     scope_data = scope_layer.getfieldval('Data')
-    for i in xrange(0, len(scope_data), 16):
+    for i in range(0, len(scope_data), 16):
         if int(scope_data[i]) == 1:
             static_route.append(scope_data[i+1:i+16].lstrip('0'))
 
