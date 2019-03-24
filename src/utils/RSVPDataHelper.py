@@ -18,6 +18,7 @@ def get_layer(data, pclass):
 def get_sendtemp_data(data):
     src_ip = None
     dst_ip = None
+    ifaces = []
     sendtemp_layer = get_layer(data, Const.CL_SENDTEMP)
     if sendtemp_layer is None:
         return None
@@ -27,7 +28,16 @@ def get_sendtemp_data(data):
     if int(sendtemp_data[16]) == 1:
         dst_ip = sendtemp_data[17:32].lstrip('0')
 
-    return {'src': src_ip, 'dst': dst_ip}
+    ifaces_data = sendtemp_data[33:]
+    iface = ""
+    for i in range(0, len(ifaces_data)):
+        if int(ifaces_data[i]) == 1 and iface:
+            ifaces.append(iface)
+            iface = None
+            continue
+        iface += ifaces_data[i]
+
+    return {'src': src_ip, 'dst': dst_ip, 'ifaces': ifaces}
 
 
 def get_adspec_data(data):
@@ -45,9 +55,9 @@ def get_adspec_data(data):
     return {'tos': tos, 'speed': req_speed}
 
 
-def get_scope_data(data):
+def get_route_data(data):
     static_route = []
-    scope_layer = get_layer(data, Const.CL_SCOPE)
+    scope_layer = get_layer(data, Const.CL_ROUTE)
     if scope_layer is None:
         return None
     scope_data = scope_layer.getfieldval('Data')
@@ -58,8 +68,8 @@ def get_scope_data(data):
     return {'static_route': static_route}
 
 
-def set_scope_data(data, static_route):
-    scope_layer = get_layer(data, Const.CL_SCOPE)
+def set_route_data(data, static_route):
+    scope_layer = get_layer(data, Const.CL_ROUTE)
     packed_route = {'Data': '1' + '1'.join(format_route(static_route))}
     scope_layer.setfieldval('Data', packed_route)
 

@@ -11,7 +11,7 @@ class Const:
     CL_SENDER = 0x0C
     CL_ADSPEC = 0x0D
     CL_SENDTEMP = 0x0B
-    CL_SCOPE = 0x07
+    CL_ROUTE = 0x1F
     CL_STYLE = 0x08
     CL_FLOWSPEC = 0x09
     CL_MSG_ID = 0x17

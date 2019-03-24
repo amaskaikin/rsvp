@@ -21,7 +21,7 @@ class PathRSVP:
         # SESSION = {'Data': '192.168.0.100'}
         # HOP = {'neighbor': '192.168.0.109', 'inface': 3}
         self.time = {'refresh': 4}
-        self.sender_template = {'Data': '1'+self.src_ip+'1'+self.dst_ip}
+        self.sender_template = {'Data': '1'+self.src_ip+'1'+self.dst_ip + '1'.join(self.interfaces)}
         self.adspec = {'Data': '1'+self.tos+'1'+self.rate}
         self.route_obj = {'Data': '1' + '1'.join(self.route)}
 

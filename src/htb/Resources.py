@@ -2,6 +2,7 @@
 
 from subprocess import call
 
+from Utils import generate_request_key
 from src.utils.Const import *
 from src.utils.Singleton import *
 from src.utils.Logger import *
@@ -65,12 +66,8 @@ class Device:
                 return htb_class.reserved
         return None
 
-    @staticmethod
-    def generate_unique_key(ip_src, ip_dst, rate, tos):
-        return '_'.join([ip_src, ip_dst, str(rate), str(tos)])
-
     def reservation_is_available(self, ip_src, ip_dst, rate, tos):
-        key = self.generate_unique_key(ip_src, ip_dst, rate, tos)
+        key = generate_request_key(ip_src, ip_dst, rate, tos)
         
         # stub for testing PathErr
         # return False, key
@@ -85,7 +82,6 @@ class Device:
             return False, Const.ERRORS[3]
 
         # create class
-        key = self.generate_unique_key(ip_src, ip_dst, rate, tos)
         new_class = Class(key, class_id, ip_src, ip_dst, rate, tos)
         self.classes.append(new_class)
         return True, key

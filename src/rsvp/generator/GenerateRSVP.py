@@ -17,7 +17,7 @@ HEADER_RESV_ERR = {'TTL': 65, 'Class': rsvpmsgtypes.get(0x04)}
 def generate_path(path_msg, dst):
     # Create test RSVP packet
     rsvp_pkt = dict(header=path_msg.header_obj, time=path_msg.time,
-                    sender_template=path_msg.sender_template, adspec=path_msg.adspec, scope=path_msg.route_obj)
+                    sender_template=path_msg.sender_template, adspec=path_msg.adspec, route=path_msg.route_obj)
     pkt = IP(dst=dst)/generate_msg(**rsvp_pkt)
     # pkt = IP(dst=dst) / RSVP(TTL=65, Class=0x01) / RSVP_Object(Class=0x03) / RSVP_HOP(neighbor='192.168.0.107')
     pkt.show2()

@@ -1,6 +1,4 @@
 # Implementation of daemon's job
-
-
 from .RSVPSniffer import *
 from src.data.ReservationRequest import ReservationRequest
 from src.htb.Reserve import *
@@ -26,5 +24,6 @@ class MyDaemon:
         req.dst_ip = DEST_ADDRESS.lstrip('0')
         req.tos = int(TOS)
         req.speed = int(RATE)
+        DbService().flush()
         # b, r = check_reserve(req)
         catch_packet()

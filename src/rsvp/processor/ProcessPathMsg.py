@@ -2,7 +2,7 @@
 from src.htb.Reserve import *
 from src.rsvp.processor.ProcessErrMsg import *
 from src.rsvp.processor.ProcessLastHop import process_pathtear_last_hop
-from src.utils.RSVPDataHelper import get_adspec_data, get_scope_data, set_scope_data
+from src.utils.RSVPDataHelper import get_adspec_data, get_route_data, set_route_data
 
 
 def process_path(data):
@@ -71,7 +71,7 @@ def get_reservation_info(data):
 
 def process_static_route(data, current_ip):
     is_valid_route = True
-    static_route_obj = get_scope_data(data)
+    static_route_obj = get_route_data(data)
     if static_route_obj is None:
         return data, is_valid_route, None
 
@@ -80,7 +80,7 @@ def process_static_route(data, current_ip):
         idx = static_route.index(current_ip)
         if idx == 0:
             static_route.remove(current_ip)
-            data = set_scope_data(data, static_route)
+            data = set_route_data(data, static_route)
         else:
             Logger.logger.info('[Process Path Message] Error: static route is invalid')
             is_valid_route = False

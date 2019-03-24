@@ -80,5 +80,9 @@ def send_next_hop(ip, data, msg_type, is_static):
     send(data)
 
 
+def generate_request_key(ip_src, ip_dst, rate, tos):
+    return '_'.join([ip_src, ip_dst, str(rate), str(tos)])
+
+
 def parse_unique_key(key):
     return re.findall(r'[0-9]+(?:\.[0-9]+){3}', key)[0]
