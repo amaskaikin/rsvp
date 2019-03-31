@@ -12,3 +12,16 @@ class Callback:
         self.direction = direction
         self.error = error
         self.is_static = is_static
+
+
+def build_callback_error(callback, is_next, error):
+    callback.result = False
+    callback.is_next = is_next
+    callback.error = error
+
+
+def build_callback(callback, result, is_next, next_label, direction):
+    callback.result = result
+    callback.is_next = is_next
+    callback.next_label = next_label
+    callback.direction = direction

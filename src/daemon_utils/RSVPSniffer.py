@@ -3,8 +3,8 @@ from scapy.layers.inet import IP
 
 from src.rsvp.generator.GenerateRSVP import generate_resv, generate_resv_tear
 from src.rsvp.model.CallbackCommands import CallbackCommands
-from src.rsvp.processor.ProcessLastHop import process_resv_last_hop, process_patherr_last_hop, process_resverr_last_hop, \
-    process_path_last_hop
+from src.rsvp.processor.ProcessLastHop import process_resv_last_hop, process_patherr_last_hop, \
+    process_resverr_last_hop, process_path_last_hop
 from src.rsvp.processor.ProcessPathMsg import *
 from src.rsvp.processor.ProcessResvMsg import process_resv, process_resv_tear
 
@@ -35,9 +35,11 @@ def process_packet(pkt):
         callback = process_resv(data)
         process_callback(callback, lambda: process_resv_last_hop(callback.request, callback.data, callback.key))
     if rsvp_class == 0x05:
-        process_path_tear(data)
+        callback = process_path_tear(data)
+        process_callback(callback, lambda: process_path_last_hop(callback.request, callback.data, callback.key))
     if rsvp_class == 0x06:
-        process_resv_tear(data)
+        callback = process_resv_tear(data)
+        process_callback(callback, lambda: process_resverr_last_hop(callback.request, callback.data, callback.key))
     if rsvp_class == 0x03:
         callback = process_path_err(data)
         process_callback(callback, lambda: process_patherr_last_hop(callback.request, callback.data, callback.key))
@@ -47,7 +49,8 @@ def process_packet(pkt):
 
 
 def process_callback(callback, lasthop_processor):
-    Logger.logger.info('Process callback ' + str(callback.request.src_ip) + 'result ' + str(callback.result) + 'is_next' + str(callback.is_next))
+    Logger.logger.info('Process callback ' + str(callback.request.src_ip) + 'result ' + str(callback.result) +
+                       'is_next' + str(callback.is_next))
     if callback.result:
         if not callback.is_next:
             error_o, func = lasthop_processor()

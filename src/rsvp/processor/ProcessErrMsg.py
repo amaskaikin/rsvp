@@ -22,7 +22,8 @@ def process_path_err(data):
     err_spec = get_layer(data, Const.CL_ERRSPEC).getfieldval('Data')
     Logger.logger.info('[PathErr] Path Error: ' + str(err_spec))
     error_o = Error(err_spec, 'path')
-    callback = Callback(request=req, data=data, result=True, is_next=not is_last_hop, next_label='PathErr', direction=dst_ip, error=error_o)
+    callback = Callback(request=req, data=data, result=True, is_next=not is_last_hop, next_label='PathErr',
+                        direction=dst_ip, error=error_o)
 
     return callback
 
@@ -42,7 +43,8 @@ def process_resv_err(data):
     Logger.logger.info('[ResvErr] Reservation Error: ' + str(err_spec))
     error_o = Error(err_spec, 'resv')
 
-    callback = Callback(request=req, data=data, result=True, is_next=is_sender, next_label='ResvErr', direction=dst_ip, error=error_o)
+    callback = Callback(request=req, data=data, result=True, is_next=is_sender, next_label='ResvErr',
+                        direction=dst_ip, error=error_o)
 
     return callback
 

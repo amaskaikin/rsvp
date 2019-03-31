@@ -78,8 +78,9 @@ def generate_resv_err(data, err_msg):
 
 def generate_resv_tear(data, key):
     flowspec = {'Data': get_layer(data, Const.CL_ADSPEC).getfieldval('Data')}
+    msg_id = {'Data': key}
     rsvp_pkt = dict(header=HEADER_RTEAR, time=TIME,
-                    style=STYLE, flowspec=flowspec, msg_id=key)
+                    style=STYLE, flowspec=flowspec, msg_id=msg_id)
     pkt = IP(dst=data.getlayer('IP').getfieldval('dst'))/generate_msg(**rsvp_pkt)
     pkt.show2()
     Logger.logger.info('Sending ResvTear Message. . .')

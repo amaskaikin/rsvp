@@ -1,27 +1,28 @@
 
 from src.htb.Reserve import *
 from src.rsvp.processor.ProcessErrMsg import *
-from src.rsvp.processor.ProcessLastHop import process_pathtear_last_hop
 from src.utils.RSVPDataHelper import get_adspec_data, get_route_data, set_route_data
 
 
 def process_path(data):
     Logger.logger.info('Processing Path Message. . .')
     res_req = get_reservation_info(data)
-    is_available, key = check_reserve(res_req)
+
     current_ip = get_current_hop(res_req.dst_ip)
+    next_hop_ip = get_next_hop(res_req.dst_ip)
     data, is_valid_route, static_route = process_static_route(data, current_ip)
     next_ip, is_static = get_direction_ip(static_route, res_req.dst_ip)
 
-    is_last_hop = next_ip == current_ip
+    is_available, key = check_reserve(res_req)
+    is_last_hop = next_ip == next_hop_ip
     callback = Callback(res_req, data, key, is_available, not is_last_hop, 'Path', next_ip, is_static=is_static)
-    Logger.logger.info('Required bandwidth is available: ' + str(is_available))
-    Logger.logger.info('Path: is last hop: ' + str(is_last_hop))
+    Logger.logger.info('[Path]: Required bandwidth is available: ' + str(is_available))
+    Logger.logger.info('[Path]: is last hop: ' + str(is_last_hop))
     if not is_available:
         error_o = Error(str(get_current_hop(res_req.dst_ip)) + str(key), 'path')
         callback.error = error_o
     if not is_valid_route:
-        error_o = Error('Static route is invalid' + str(key), 'path')
+        error_o = Error('[Path]: Static route is invalid' + str(key), 'path')
         callback.error = error_o
 
     return callback
@@ -29,22 +30,20 @@ def process_path(data):
 
 def process_path_tear(data):
     Logger.logger.info('Processing PathTear Message. . .')
-    req = ReservationRequest.Instance()
-    src_ip = get_sendtemp_data(data).get('src')
-    dst_ip = get_sendtemp_data(data).get('dst')
-    tos = get_adspec_data(data).get('tos')
-    req_speed = get_adspec_data(data).get('speed')
-    is_last_hop = req.dst_ip == get_current_hop(req.dst_ip)
-    if req.src_ip == src_ip and req.dst_ip == dst_ip and str(req.tos) == str(tos) and str(req.speed) == str(req_speed):
-        Logger.logger.info('Destroying Path: src ip: ' + src_ip + ', dst ip: ' + dst_ip +
-                           ', tos: ' + str(tos) + ', rate: ' + str(req_speed))
-        if not is_last_hop:
-            send_next_hop(req.dst_ip, data, 'PathTear')
-        else:
-            Logger.logger.info('PathTear message reached the last hop')
-            process_pathtear_last_hop(req, data, None)
-    else:
-        Logger.logger.info('Error during destroying process: path is broken')
+    res_req = get_reservation_info(data)
+
+    next_hop_ip = get_next_hop(res_req.dst_ip)
+    is_last_hop = res_req.dst_ip == next_hop_ip
+    # TODO: mark for destroy
+    is_destroyed, key = check_reserve(res_req)
+    callback = Callback(res_req, data, key, is_destroyed, not is_last_hop, 'Path', res_req.dst_ip)
+    Logger.logger.info('[PathTear]: is destroyed' + str(is_destroyed))
+    Logger.logger.info('[PathTear]: is last hop: ' + str(is_last_hop))
+    if not is_destroyed:
+        error_o = Error(str(get_current_hop(res_req.dst_ip)) + str(key) + " PathTear error", 'path')
+        callback.error = error_o
+
+    return callback
 
 
 def get_reservation_info(data):
