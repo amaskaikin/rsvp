@@ -58,15 +58,16 @@ def process_resv(data):
 def process_resv_tear(data):
     Logger.logger.info('Processing ResvTear Message. . .')
     key = get_layer(data, Const.CL_MSG_ID).getfieldval('Data')
+    is_class, ret = get_class(key)
+    Logger.logger.info('is_class ' + str(is_class) + ' ret ' + str(ret))
 
-    # create and read request params from db
     req = ReservationRequest.Instance()
-    # TODO: call destroy method
-    is_destroyed, ret = reserve(key)
     req.src_ip = ret[0]
     req.dst_ip = ret[1]
     req.tos = ret[2]
     req.speed = ret[3]
+
+    is_destroyed, ret = remove_reserve(key)
 
     Logger.logger.info('[ResvTear] Destroying request: src ip: ' + str(req.src_ip) + ', dst ip: ' + str(req.dst_ip) +
                        ', tos: ' + str(req.tos) + ', rate: ' + str(req.speed))
@@ -74,19 +75,13 @@ def process_resv_tear(data):
     next_ip = get_next_hop(req.src_ip)
     is_sender = next_ip == req.src_ip
     callback = Callback(req, data, key)
-    if not any((req.src_ip, req.dst_ip, req.tos, req.speed)):
-        error_msg = str(get_current_hop(req.src_ip)) + ': Error! Path is broken'
-        error_o = Error(error_msg, 'resv')
-
-        build_callback_error(callback, not is_sender, error_o)
-        return callback
 
     if is_destroyed:
         Logger.logger.info('Destroying completed successfully')
         build_callback(callback, is_destroyed, not is_sender, 'ResvTear', req.src_ip)
     else:
         Logger.logger.info('Destroying failed')
-        error_msg = str(get_current_hop(req.src_ip)) + ': Error! Destroying failed'
+        error_msg = str(get_current_hop(req.src_ip)) + ': Error! Destroying failed ' + ret
         error_o = Error(error_msg, 'resv')
         build_callback_error(callback, not is_sender, error_o)
 

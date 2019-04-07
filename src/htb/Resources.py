@@ -125,6 +125,17 @@ class Device:
 
         return True, [htb_class.ip_src, htb_class.ip_dst, htb_class.rate, htb_class.tos]
 
+    def is_valid_path(self, ip_src, ip_dst, rate, tos):
+        key = generate_request_key(ip_src, ip_dst, rate, tos)
+        htb_class = self.class_exists(key)
+
+        if htb_class is None:
+            return False, Const.ERRORS[4]
+        if not htb_class.reserved:
+            return False, Const.ERRORS[5]
+
+        return True, key
+
     def remove(self, key):
         htb_class = self.class_exists(key)
 

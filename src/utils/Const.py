@@ -24,5 +24,7 @@ class Const:
         3: 'There is no available htb classes',
         4: 'Htb class does not exist',
         5: 'Htb class is already reserved',
-        6: 'Htb class is not reserved'
+        6: 'Htb class is not reserved',
+        7: 'Path marked for destroy',
+        8: 'Path is not marked for destroy!'
     }

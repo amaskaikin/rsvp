@@ -34,12 +34,11 @@ def process_path_tear(data):
 
     next_hop_ip = get_next_hop(res_req.dst_ip)
     is_last_hop = res_req.dst_ip == next_hop_ip
-    # TODO: mark for destroy
-    is_destroyed, key = check_reserve(res_req)
-    callback = Callback(res_req, data, key, is_destroyed, not is_last_hop, 'Path', res_req.dst_ip)
-    Logger.logger.info('[PathTear]: is destroyed' + str(is_destroyed))
+    is_marked_for_destroy, key = mark_destroy_path(res_req)
+    callback = Callback(res_req, data, key, is_marked_for_destroy, not is_last_hop, 'Path', res_req.dst_ip)
+    Logger.logger.info('[PathTear]: is destroyed' + str(is_marked_for_destroy))
     Logger.logger.info('[PathTear]: is last hop: ' + str(is_last_hop))
-    if not is_destroyed:
+    if not is_marked_for_destroy:
         error_o = Error(str(get_current_hop(res_req.dst_ip)) + str(key) + " PathTear error", 'path')
         callback.error = error_o
 
