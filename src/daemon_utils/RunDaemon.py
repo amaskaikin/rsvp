@@ -42,7 +42,7 @@ def run_daemon(args):
 def stop_daemon():
     try:
         pf = open(daemon_instance.pidfile, 'r')
-    except FileNotFoundError:
+    except IOError:
         raise Exception("pidfile {} does not exist. Daemon not running?".format(daemon_instance.pidfile))
     pid = int(pf.read().strip())
     pf.close()

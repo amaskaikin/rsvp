@@ -17,11 +17,13 @@ HEADER_RESV_ERR = {'TTL': 65, 'Class': rsvpmsgtypes.get(0x04)}
 def generate_path(path_msg, dst):
     # Create test RSVP packet
     rsvp_pkt = dict(header=path_msg.header_obj, time=path_msg.time,
-                    sender_template=path_msg.sender_template, adspec=path_msg.adspec, route=path_msg.route_obj)
+                    sender_template=path_msg.sender_template, adspec=path_msg.adspec)
+    if path_msg.route_obj is not None:
+        rsvp_pkt['route'] = path_msg.route_obj
     pkt = IP(dst=dst)/generate_msg(**rsvp_pkt)
     # pkt = IP(dst=dst) / RSVP(TTL=65, Class=0x01) / RSVP_Object(Class=0x03) / RSVP_HOP(neighbor='192.168.0.107')
-    pkt.show2()
-    Logger.logger.info('Sending Path message to ' + DEST_ADDRESS.lstrip('0') + ' . . .')
+    pkt.show()
+    Logger.logger.info('Sending Path message to ' + dst.lstrip('0') + ' . . .')
     # while True:
     send(pkt)
     # time.sleep(5)
@@ -33,7 +35,7 @@ def generate_path_tear(dst):
                     time=PathTearRSVP.TIME, sender_template=PathTearRSVP.SENDER_TEMPLATE, adspec=PathTearRSVP.ADSPEC)
     pkt = IP(dst=dst)/generate_msg(**rsvp_pkt)
     pkt.show2()
-    Logger.logger.info('Sending PathTear message to ' + DEST_ADDRESS.lstrip('0') + ' . . .')
+    Logger.logger.info('Sending PathTear message to ' + dst.lstrip('0') + ' . . .')
     send(pkt)
 
 
@@ -99,7 +101,8 @@ if __name__ == '__main__':
 
         parsed = parser.parse_args()  # parses sys.argv by default
         rsvp = PathRSVP(parsed.src_ip, parsed.dst_ip, parsed.tos, parsed.rate, parsed.route, parsed.ifaces)
-        generate_path(rsvp, parsed.dst_ip)
+        next_ip = get_next_hop(parsed.dst_ip)
+        generate_path(rsvp, next_ip)
         # generate_path_tear(Const.TARGET_ADDRESS)
     except KeyboardInterrupt:
         pass

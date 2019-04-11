@@ -19,7 +19,7 @@ class DbService:
         return key
 
     def get_request_data(self, key):
-        return self.db_instance.search(where(self.DB_KEY) == key)
+        return self.db_instance.search(where(self.DB_KEY) == key).pop()
 
     def update_path_state(self, key, path_enabled):
         self.db_instance.update({self.DB_PATH_ENABLED: path_enabled}, where(self.DB_KEY == key))

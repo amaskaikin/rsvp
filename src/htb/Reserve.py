@@ -1,6 +1,6 @@
 # Reserve resources
 from src.utils.Const import Const
-from DbService import DbService
+from src.db.DbService import DbService
 from src.utils.Utils import *
 
 db_service = DbService()

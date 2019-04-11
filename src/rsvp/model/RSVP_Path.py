@@ -17,13 +17,17 @@ class PathRSVP:
         self.route = format_route(route)
         self.interfaces = interfaces
 
-        self.header_obj = {'TTL': 65, 'Class': rsvpmsgtypes.get(0x01)}
+        self.header_obj = {'TTL': 65, 'Class': rsvpmsgtypes.get(0x01), 'Version': 1}
         # SESSION = {'Data': '192.168.0.100'}
         # HOP = {'neighbor': '192.168.0.109', 'inface': 3}
         self.time = {'refresh': 4}
-        self.sender_template = {'Data': '1'+self.src_ip+'1'+self.dst_ip + '1'.join(self.interfaces)}
+        self.sender_template = {'Data': '1'+self.src_ip+'1'+self.dst_ip +
+                                        ('1'.join(self.interfaces) if interfaces else '')}
         self.adspec = {'Data': '1'+self.tos+'1'+self.rate}
-        self.route_obj = {'Data': '1' + '1'.join(self.route)}
+        if route:
+            self.route_obj = {'Data': '1' + '1'.join(self.route)}
+        else:
+            self.route_obj = None
 
 
 class PathTearRSVP:

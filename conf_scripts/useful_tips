@@ -1,14 +1,15 @@
 ## NECESSARY MODULES TO BE IMPORTED
 	apt-get -y install python-daemon
-	apt-get -y install python-lockfile
 	apt-get -y install python-scapy
+	apt-get -y install python-pip
+	python -m pip install tinydb
 
 ## FOR GENERATING RSVP PACKAGES
 To import contrib package, which contains rsvp class:
 	https://github.com/levigross/Scapy/blob/master/scapy/contrib/rsvp.py # RSVP
 	
 	$ mkdir /usr/lib/python2.7/dist-packages/scapy/contrib
-	$ cp rsvp.py /usr/lib/python2.7/dist-packages/scapy/contrib/
+	$ cp conf_scripts/rsvp.py /usr/lib/python2.7/dist-packages/scapy/contrib/
 	$ touch /usr/lib/python2.7/dist-packages/scapy/contrib/__init__.py
 	
 ## ENABLE IP FORWARDING
@@ -31,10 +32,24 @@ Path: /etc/network/interfaces
 	network 192.168.56.0
 	broadcast 192.168.56.255
 	
-apt-get install virtualbox-guest-dkms
+apt-get -y install virtualbox-guest-dkms
+apt-get -y install virtualbox-guest-utils
 mount -t vboxsf vboxshared shared
 
 ## DISABLE NETWORK
 	service NetworkManager stop
 	dhclient -r <device_name>
 	ip a flush dev <device_name>
+
+
+## Configuration of 3 instances
+## First instance:
+	ip a add 1.1.1.1/24 dev enp0s3
+	ip ro add 1.1.2.0/24 via 1.1.1.2
+## Second instance:
+	ip link set enp0s8 up
+	ip a add 1.1.1.2/24 dev enp0s3
+	ip a add 1.1.2.1/24 dev enp0s8
+## Third instance:
+	ip a add 1.1.2.2/24 dev enp0s3
+	ip ro add 1.1.1.0/24 via 1.1.2.1

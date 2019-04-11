@@ -2,7 +2,6 @@
 
 from subprocess import call
 
-from Utils import generate_request_key
 from src.utils.Const import *
 from src.utils.Singleton import *
 from src.utils.Logger import *
@@ -67,7 +66,7 @@ class Device:
         return None
 
     def reservation_is_available(self, ip_src, ip_dst, rate, tos):
-        key = generate_request_key(ip_src, ip_dst, rate, tos)
+        key = self.generate_request_key(ip_src, ip_dst, rate, tos)
         
         # stub for testing PathErr
         # return False, key
@@ -126,7 +125,7 @@ class Device:
         return True, [htb_class.ip_src, htb_class.ip_dst, htb_class.rate, htb_class.tos]
 
     def is_valid_path(self, ip_src, ip_dst, rate, tos):
-        key = generate_request_key(ip_src, ip_dst, rate, tos)
+        key = self.generate_request_key(ip_src, ip_dst, rate, tos)
         htb_class = self.class_exists(key)
 
         if htb_class is None:
@@ -153,6 +152,9 @@ class Device:
               'parent', '1:1', 'classid', htb_class.class_id])
 
         return True, ''
+
+    def generate_request_key(self, ip_src, ip_dst, rate, tos):
+        return '_'.join([ip_src, ip_dst, str(rate), str(tos)])
 
 
 class Class:
