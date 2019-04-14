@@ -16,7 +16,7 @@ daemon_instance = MyDaemon()
 
 def setup_daemon_context():
     context = daemon.DaemonContext(
-        pidfile=pidfile.TimeoutPIDLockFile(daemon_instance.pidfile),
+        # pidfile=pidfile.TimeoutPIDLockFile(daemon_instance.pidfile),
         stdin=daemon_instance.stdin,
         stdout=daemon_instance.stdout,
         stderr=daemon_instance.stderr,
@@ -27,12 +27,13 @@ def setup_daemon_context():
 
 
 def run_daemon(args):
-    if len(args) != 2:
-        raise Exception("usage: {} start|stop".format(args[0]))
+    if len(args) < 2:
+        raise Exception("usage: {} start|stop [autobandwidth]".format(args[0]))
+
     if args[1] == 'start':
         context = setup_daemon_context()
         with context:
-            daemon_instance.run()
+            daemon_instance.run(check_autobandwidth(args))
     elif args[1] == 'stop':
         stop_daemon()
     else:
@@ -58,6 +59,13 @@ def stop_daemon():
         else:
             print(str(err))
             sys.exit(1)
+
+
+def check_autobandwidth(args):
+    if len(args) == 3:
+        return True
+    else:
+        return False
 
 
 if __name__ == '__main__':

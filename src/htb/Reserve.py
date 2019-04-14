@@ -1,9 +1,9 @@
 # Reserve resources
 from src.utils.Const import Const
-from src.db.DbService import DbService
+from src.db.DbService import DbService, DbInstance
 from src.utils.Utils import *
 
-db_service = DbService()
+db_service = DbInstance.Instance().db_service
 
 
 def check_reserve(request):
@@ -19,6 +19,7 @@ def reserve(key):
     if not is_path_enabled(key):
         return False, Const.ERRORS[7]
     device = get_device_instance(src_ip)
+    db_service.insert_reserved_interface(device.name, key)
     return device.call_htb(key)
 
 

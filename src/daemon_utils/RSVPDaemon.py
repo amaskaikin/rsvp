@@ -1,4 +1,5 @@
 # Implementation of daemon's job
+from src.autobandwidth.RunAutoBandwidth import ABRunner
 from .RSVPSniffer import *
 from src.data.ReservationRequest import ReservationRequest
 from src.htb.Reserve import *
@@ -15,7 +16,7 @@ class MyDaemon:
         self.pidfile = os.path.abspath('res/my_daemon.pid')
         self.pidfile_timeout = 5
 
-    def run(self):
+    def run(self, is_autobandwidth):
         self.logger = Logger.logger
         self.logger.info("Daemon started")
         # Testing stub for keeping requested qos on the sender
@@ -24,6 +25,8 @@ class MyDaemon:
         req.dst_ip = DEST_ADDRESS.lstrip('0')
         req.tos = int(TOS)
         req.speed = int(RATE)
-        DbService().flush()
+        DbInstance.Instance().db_service.flush()
         # b, r = check_reserve(req)
+        if is_autobandwidth:
+            ABRunner()
         catch_packet()

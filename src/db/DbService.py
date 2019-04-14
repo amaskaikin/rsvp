@@ -1,5 +1,20 @@
 from tinydb import TinyDB, where
 from tinydb.storages import MemoryStorage
+from src.utils.Singleton import *
+
+
+@Singleton
+class DbInstance:
+    def __init__(self):
+        self.db_service = DbService()
+
+    @property
+    def db_service(self):
+        return self.db_service
+
+    @db_service.setter
+    def db_service(self, value):
+        self._db_service = value
 
 
 class DbService:
@@ -9,6 +24,8 @@ class DbService:
     DB_SPEED = 'speed'
     DB_TOS = 'tos'
     DB_PATH_ENABLED = 'path_enabled'
+    DB_RESERVED_INTERFACE = 'reserved_iface'
+    DB_RESERVED_KEY = 'reserved_key'
 
     def __init__(self):
         self.db_instance = TinyDB(storage=MemoryStorage).table()
@@ -21,8 +38,24 @@ class DbService:
     def get_request_data(self, key):
         return self.db_instance.search(where(self.DB_KEY) == key).pop()
 
+    def remove_request_data(self):
+        pass  # TODO: implement remove
+
     def update_path_state(self, key, path_enabled):
         self.db_instance.update({self.DB_PATH_ENABLED: path_enabled}, where(self.DB_KEY == key))
+
+    def insert_reserved_interface(self, interface, key):
+        self.db_instance.insert({self.DB_RESERVED_INTERFACE: interface, self.DB_RESERVED_KEY: key})
+
+    def remove_reserved_interface(self, interface):
+        pass  # TODO: implement remove
+
+    def get_all_reserved_interfaces(self):
+        return self.db_instance.search(where(self.DB_RESERVED_INTERFACE))
+
+    def get_reserved_interface_request(self, interface):
+        key = self.db_instance.search(where(self.DB_RESERVED_INTERFACE) == interface)
+        return self.get_request_data(key)
 
     def flush(self):
         self.db_instance.purge()
