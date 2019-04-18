@@ -122,7 +122,7 @@ class Device:
         # call(['sudo', 'tc', 'qdisc', 'add', 'dev', self.name,
         #       'parent', class_id, 'handle', '20:', 'pfifo', 'limit', '5'])
 
-        return True, [htb_class.ip_src, htb_class.ip_dst, htb_class.rate, htb_class.tos]
+        return True, [htb_class.ip_src, htb_class.ip_dst, htb_class.rate, htb_class.tos], htb_class.class_id
 
     def is_valid_path(self, ip_src, ip_dst, rate, tos):
         key = self.generate_request_key(ip_src, ip_dst, rate, tos)
@@ -147,7 +147,13 @@ class Device:
         # make class unreserved
         htb_class.reserved = False
 
+        flowid = '1:' + str(htb_class.class_id)
         # call htb cmd
+        Logger.logger.info("Remove: dev + " + self.name + " ,class: " + htb_class.class_id + " ,tos: " +
+                           htb_class.tos + " flowid: " + flowid)
+        call(['sudo', 'tc', 'filter', 'del', 'dev', self.name,
+              'parent', '1:', 'protocol', 'ip', 'prio', '1', 'u32',
+              'match', 'ip', 'tos', hex(int(htb_class.tos)), '0xff', 'flowid', flowid])
         call(['sudo', 'tc', 'class', 'del', 'dev', self.name,
               'parent', '1:1', 'classid', htb_class.class_id])
 

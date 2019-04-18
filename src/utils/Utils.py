@@ -19,12 +19,12 @@ def format_route(route):
     return formatted_route
 
 
-def get_device_instance(ip_src):
+def get_device_instance(next_hop):
     # get singleton instance
     resources = Resources.Instance()
 
     # get device's name
-    output = check_output(['ip', 'route', 'get', ip_src]).split()
+    output = check_output(['ip', 'route', 'get', next_hop]).split()
 
     if output[0] == 'local':
         device_name = output[3]

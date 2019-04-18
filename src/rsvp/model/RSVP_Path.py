@@ -31,8 +31,25 @@ class PathRSVP:
 
 
 class PathTearRSVP:
-    def __init__(self):
-        pass
+    def __init__(self, src_ip, dst_ip, tos, rate, route=None, interfaces=None):
+        self.src_ip = format_address(src_ip)
+        self.dst_ip = format_address(dst_ip)
+        self.tos = tos
+        self.rate = rate
+        self.route = format_route(route)
+        self.interfaces = interfaces
+
+        self.header_obj = {'TTL': 65, 'Class': rsvpmsgtypes.get(0x05), 'Version': 1}
+        # SESSION = {'Data': '192.168.0.100'}
+        # HOP = {'neighbor': '192.168.0.109', 'inface': 3}
+        self.time = {'refresh': 4}
+        self.sender_template = {'Data': '1' + self.src_ip + '1' + self.dst_ip +
+                                        ('1'.join(self.interfaces) if interfaces else '')}
+        self.adspec = {'Data': '1' + str(self.tos) + '1' + str(self.rate)}
+        if route:
+            self.route_obj = {'Data': '1' + '1'.join(self.route)}
+        else:
+            self.route_obj = None
 
     HEADER = {'TTL': 65, 'Class': rsvpmsgtypes.get(0x05)}
     TIME = {'refresh': 4}

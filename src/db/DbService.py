@@ -25,7 +25,7 @@ class DbService:
     DB_TOS = 'tos'
     DB_PATH_ENABLED = 'path_enabled'
     DB_RESERVED_INTERFACE = 'reserved_iface'
-    DB_RESERVED_KEY = 'reserved_key'
+    DB_RESERVED_CLASS = 'reserved_class'
 
     def __init__(self):
         self.db_instance = TinyDB(storage=MemoryStorage).table()
@@ -36,16 +36,20 @@ class DbService:
         return key
 
     def get_request_data(self, key):
-        return self.db_instance.search(where(self.DB_KEY) == key).pop()
+        return self.db_instance.search(where(self.DB_KEY) == key)[0]
+
+    def update_reserved_iface(self, key, iface, class_id):
+        self.db_instance.update({self.DB_RESERVED_INTERFACE: iface, self.DB_RESERVED_CLASS: class_id},
+                                where(self.DB_KEY) == key)
 
     def remove_request_data(self):
         pass  # TODO: implement remove
 
     def update_path_state(self, key, path_enabled):
-        self.db_instance.update({self.DB_PATH_ENABLED: path_enabled}, where(self.DB_KEY == key))
+        self.db_instance.update({self.DB_PATH_ENABLED: path_enabled}, where(self.DB_KEY) == key)
 
     def insert_reserved_interface(self, interface, key):
-        self.db_instance.insert({self.DB_RESERVED_INTERFACE: interface, self.DB_RESERVED_KEY: key})
+        self.db_instance.insert({self.DB_RESERVED_INTERFACE: interface, self.DB_RESERVED_CLASS: key})
 
     def remove_reserved_interface(self, interface):
         pass  # TODO: implement remove
