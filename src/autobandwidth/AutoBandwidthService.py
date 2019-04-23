@@ -55,6 +55,7 @@ class ABService:
         self.process_autobandwidth()
 
     def update_tunnels(self):
+        Logger.logger.info("ABService: reserved_data " + str(self.reserved_data))
         for data in self.reserved_data:
             avg_diff = self.calculate_average_diff(data[DIFF_KEY])
             # print("avg_diff: " + str(avg_diff))
@@ -74,6 +75,9 @@ class ABService:
                 # increase bw
                 Logger.logger.info("ABService: increase bw for " + key + " by " +
                                    str(self.ab_instance.adjust_threshold))
+            else:
+                Logger.logger.info("ABService: resetting measured diff for " + key)
+                del data[DIFF_KEY]
 
     def calculate_diff(self):
         for data in self.reserved_data:
