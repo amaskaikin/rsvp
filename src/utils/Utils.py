@@ -9,6 +9,10 @@ def format_address(ip):
     return ip.zfill(15)
 
 
+def format_speed(rate):
+    return str(rate).zfill(8)
+
+
 def format_route(route):
     formatted_route = []
     if not route:

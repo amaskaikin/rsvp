@@ -1,5 +1,7 @@
-from src.htb.Reserve import reserve
+from src.utils.Const import Const
+from src.htb.Reserve import reserve, remove_reserve
 from src.rsvp.model.CallbackCommands import CallbackCommands
+from src.utils.RSVPDataHelper import get_spec_data
 from src.rsvp.model.Error import Error
 from src.utils.Logger import Logger
 from src.utils.Utils import get_current_hop
@@ -50,8 +52,7 @@ def process_pathtear_last_hop(req, data, key):
     Logger.logger.info('Parameters - src_ip: ' + req.src_ip +
                        ', dst ip: ' + req.dst_ip +
                        ', tos: ' + str(req.tos) + ', rate: ' + str(req.speed))
-    # TODO: call destroy method
-    is_destroyed, ret = reserve(key)
+    is_destroyed, ret = remove_reserve(key)
     if is_destroyed:
         Logger.logger.info('Destroyed successfully')
         ip = get_next_hop(req.src_ip)
@@ -71,4 +72,11 @@ def process_pathtear_last_hop(req, data, key):
 def process_resvtear_last_hop(req, data, key):
     Logger.logger.info('ResvTear message reached the sender.')
     Logger.logger.info('Full Reservation destroying completed successfully')
-    return None, CallbackCommands.NONE
+    Logger.logger.info(get_spec_data(data))
+    new_rate = get_spec_data(data, Const.CL_FLOWSPEC)['ab_rate']
+    if new_rate:
+        Logger.logger.info('Generate Path with new bw: ' + str(new_rate))
+        req.speed = new_rate
+        return None, CallbackCommands.GENERATE_PATH
+    else:
+        return None, CallbackCommands.NONE

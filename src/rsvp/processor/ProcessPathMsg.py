@@ -1,7 +1,7 @@
 
 from src.htb.Reserve import *
 from src.rsvp.processor.ProcessErrMsg import *
-from src.utils.RSVPDataHelper import get_adspec_data, get_route_data, set_route_data
+from src.utils.RSVPDataHelper import get_spec_data, get_route_data, set_route_data
 
 
 def process_path(data):
@@ -34,10 +34,12 @@ def process_path_tear(data):
 
     next_hop_ip = get_next_hop(res_req.dst_ip)
     is_last_hop = res_req.dst_ip == next_hop_ip
+    Logger.logger.info('[PathTear] next_hop_ip: ' + next_hop_ip)
+    Logger.logger.info('[PathTear]: is last hop: ' + str(is_last_hop))
     is_marked_for_destroy, key = mark_destroy_path(res_req)
     callback = Callback(res_req, data, key, is_marked_for_destroy, not is_last_hop, 'Path', res_req.dst_ip)
     Logger.logger.info('[PathTear]: is destroyed' + str(is_marked_for_destroy))
-    Logger.logger.info('[PathTear]: is last hop: ' + str(is_last_hop))
+
     if not is_marked_for_destroy:
         error_o = Error(str(get_current_hop(res_req.dst_ip)) + str(key) + " PathTear error", 'path')
         callback.error = error_o
@@ -49,8 +51,8 @@ def get_reservation_info(data):
     req = ReservationRequest.Instance()
     src_ip = get_sendtemp_data(data).get('src')
     dst_ip = get_sendtemp_data(data).get('dst')
-    tos = get_adspec_data(data).get('tos')
-    req_speed = get_adspec_data(data).get('speed')
+    tos = get_spec_data(data).get('tos')
+    req_speed = get_spec_data(data).get('speed')
 
     Logger.logger.info('[Path] Reservation request: src ip: ' + src_ip + ', dst ip: ' + dst_ip +
                        ', tos: ' + tos + ', rate: ' + req_speed)

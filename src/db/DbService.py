@@ -6,10 +6,12 @@ from src.utils.Singleton import *
 @Singleton
 class DbInstance:
     def __init__(self):
+        print("init dbservice")
         self.db_service = DbService()
 
     @property
     def db_service(self):
+        print("get dbservice")
         return self.db_service
 
     @db_service.setter
@@ -51,8 +53,8 @@ class DbService:
     def insert_reserved_interface(self, interface, key):
         self.db_instance.insert({self.DB_RESERVED_INTERFACE: interface, self.DB_RESERVED_CLASS: key})
 
-    def remove_reserved_interface(self, interface):
-        pass  # TODO: implement remove
+    def remove_reserved_info(self, key):
+        self.db_instance.remove(where(self.DB_KEY) == key)
 
     def get_all_reserved_interfaces(self):
         return self.db_instance.search(where(self.DB_RESERVED_INTERFACE))

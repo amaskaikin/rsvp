@@ -25,7 +25,8 @@ class MyDaemon:
         req.dst_ip = DEST_ADDRESS.lstrip('0')
         req.tos = int(TOS)
         req.speed = int(RATE)
-        DbInstance.Instance().db_service.flush()
+        db_instance = DbInstance.Instance().db_service
+        db_instance.flush()
         # b, r = check_reserve(req)
         if is_autobandwidth:
             ABRunner()

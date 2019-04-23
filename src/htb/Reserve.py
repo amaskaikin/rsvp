@@ -25,7 +25,7 @@ def reserve(key):
 
 
 def mark_destroy_path(request):
-    device = get_device_instance(request.src_ip)
+    device = get_device_instance(request.dst_ip)
     is_valid_path, key = device.is_valid_path(request.src_ip, request.dst_ip, request.speed, request.tos)
     if is_valid_path:
         db_service.update_path_state(key, False)
@@ -38,12 +38,16 @@ def remove_reserve(key):
     if is_path_enabled(key):
         return False, Const.ERRORS[7]
     device = get_device_instance(dst_ip)
+    db_service.remove_reserved_info(key)
+
     return device.remove(key)
 
 
-def get_class(key):
+def get_class(key, is_destroy=False):
     dst_ip = db_service.get_request_data(key)[DbService.DB_DST_IP]
     device = get_device_instance(dst_ip)
+    if is_destroy:
+        return device.get_htb_class_for_destroy(key)
     return device.get_htb_class(key)
 
 

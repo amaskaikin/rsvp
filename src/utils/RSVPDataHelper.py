@@ -40,10 +40,11 @@ def get_sendtemp_data(data):
     return {'src': src_ip, 'dst': dst_ip, 'ifaces': ifaces}
 
 
-def get_adspec_data(data):
+def get_spec_data(data, spec=Const.CL_ADSPEC):
     tos = None
     req_speed = None
-    adspec_layer = get_layer(data, Const.CL_ADSPEC)
+    ab_rate = None
+    adspec_layer = get_layer(data, spec)
     if adspec_layer is None:
         return None
     adspec_data = adspec_layer.getfieldval('Data')
@@ -51,8 +52,10 @@ def get_adspec_data(data):
         tos = adspec_data[1:3].lstrip('0')
     if int(adspec_data[3]) == 1:
         req_speed = adspec_data[4:12].lstrip('0')
+    if len(adspec_data) > 12 and int(adspec_data[12]) == 1:
+        ab_rate = adspec_data[13:21].lstrip('0')
 
-    return {'tos': tos, 'speed': req_speed}
+    return {'tos': tos, 'speed': req_speed, 'ab_rate': ab_rate}
 
 
 def get_route_data(data):

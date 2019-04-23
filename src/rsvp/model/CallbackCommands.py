@@ -5,6 +5,7 @@ class CallbackCommands:
         pass
 
     NONE = 0
-    GENERATE_RESV = 1
-    GENERATE_RESV_TEAR = 2
-    SEND_ERROR = 3
+    GENERATE_PATH = 1
+    GENERATE_RESV = 2
+    GENERATE_RESV_TEAR = 3
+    SEND_ERROR = 4

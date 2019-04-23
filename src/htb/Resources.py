@@ -46,7 +46,7 @@ class Device:
         return False
 
     def bandwidth_is_available(self, new_rate):
-        new_bandwidth = self.bandwidth - new_rate
+        new_bandwidth = int(self.bandwidth) - int(new_rate)
         if new_bandwidth > 0:
             self.bandwidth = new_bandwidth
             return True
@@ -96,6 +96,15 @@ class Device:
 
         return True, [htb_class.ip_src, htb_class.ip_dst, htb_class.rate, htb_class.tos]
 
+    def get_htb_class_for_destroy(self, key):
+        htb_class = self.class_exists(key)
+
+        # errors
+        if htb_class is None:
+            return False, Const.ERRORS[4]
+
+        return True, [htb_class.ip_src, htb_class.ip_dst, htb_class.rate, htb_class.tos]
+
     def call_htb(self, key):
         htb_class = self.class_exists(key)
 
@@ -111,7 +120,7 @@ class Device:
         # make class reserved
         htb_class.reserved = True
         
-        Logger.logger.info(str(htb_class.class_id) + ' ' + str(htb_class.tos))
+        # Logger.logger.info(str(htb_class.class_id) + ' ' + str(htb_class.tos))
         flowid = '1:' + str(htb_class.class_id)
         # call htb cmd
         call(['sudo', 'tc', 'class', 'add', 'dev', self.name,

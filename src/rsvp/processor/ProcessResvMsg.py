@@ -18,15 +18,10 @@ def process_resv(data):
     callback = Callback(req, data, key)
 
     if is_class:
-        req.tos = ret[2]
-        req.speed = ret[3]
+        req.speed = ret[2]
+        req.tos = ret[3]
         Logger.logger.info('[Resv] Reservation request: src ip: ' + str(req.src_ip) + ', dst ip: ' + str(req.dst_ip) +
                            ', tos: ' + str(req.tos) + ', rate: ' + str(req.speed))
-        
-        if is_sender:
-            callback.result = True
-            callback.is_next = False
-            return callback
         if not any((req.src_ip, req.dst_ip, req.tos, req.speed)):
             error_msg = str(get_current_hop(req.src_ip)) + ': Error! Path is broken'
             error_o = Error(error_msg, 'resv')
@@ -58,14 +53,14 @@ def process_resv(data):
 def process_resv_tear(data):
     Logger.logger.info('Processing ResvTear Message. . .')
     key = get_layer(data, Const.CL_MSG_ID).getfieldval('Data')
-    is_class, ret = get_class(key)
+    is_class, ret = get_class(key, True)
     Logger.logger.info('is_class ' + str(is_class) + ' ret ' + str(ret))
 
     req = ReservationRequest.Instance()
     req.src_ip = ret[0]
     req.dst_ip = ret[1]
-    req.tos = ret[2]
-    req.speed = ret[3]
+    req.speed = ret[2]
+    req.tos = ret[3]
 
     is_destroyed, ret = remove_reserve(key)
 

@@ -30,17 +30,17 @@ def generate_path(path_msg, dst):
     # time.sleep(5)
 
 
-def generate_path_tear(path_tear, dst=None, is_autobandwidth=False):
+def generate_path_tear(path_tear, dst=None, is_autobandwidth=False, new_bw=None):
     # Create test RSVP packet
     if is_autobandwidth:
         path_tear = PathTearRSVP(path_tear[DbService.DB_SRC_IP], path_tear[DbService.DB_DST_IP],
-                                 path_tear[DbService.DB_TOS], path_tear[DbService.DB_SPEED])
+                                 path_tear[DbService.DB_TOS], path_tear[DbService.DB_SPEED], new_bw=new_bw)
         dst = get_next_hop(path_tear.dst_ip)
     rsvp_pkt = dict(header=path_tear.header_obj, time=path_tear.time,
                     sender_template=path_tear.sender_template, adspec=path_tear.adspec)
     if path_tear.route_obj is not None:
         rsvp_pkt['route'] = path_tear.route_obj
-    pkt = IP(src=path_tear.src_ip, dst=dst)/generate_msg(**rsvp_pkt)
+    pkt = IP(src=path_tear.src_ip.lstrip('0'), dst=dst)/generate_msg(**rsvp_pkt)
     pkt.show()
     Logger.logger.info('Sending PathTear message to ' + dst.lstrip('0') + ' . . .')
     send(pkt)
@@ -91,9 +91,12 @@ def generate_resv_tear(data, key):
     msg_id = {'Data': key}
     rsvp_pkt = dict(header=HEADER_RTEAR, time=TIME,
                     style=STYLE, flowspec=flowspec, msg_id=msg_id)
-    pkt = IP(dst=data.getlayer('IP').getfieldval('dst'))/generate_msg(**rsvp_pkt)
+    dst = data.getlayer('IP').getfieldval('dst')
+    pkt = IP(dst=dst)/generate_msg(**rsvp_pkt)
+    del pkt.chksum
+    pkt = pkt.__class__(str(pkt))
     pkt.show2()
-    Logger.logger.info('Sending ResvTear Message. . .')
+    Logger.logger.info('Sending ResvTear Message to' + dst.lstrip('0') + ' . . .')
     send(pkt)
 
 
