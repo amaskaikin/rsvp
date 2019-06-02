@@ -68,13 +68,16 @@ class ABService:
                 self.db_instance.update_path_state(key, False)
                 path_req = self.db_instance.get_request_data(key)
                 new_bw = int(path_req[DbService.DB_SPEED]) - self.ab_instance.adjust_threshold
-                # path_req[DbService.DB_SPEED] -= self.ab_instance.adjust_threshold
                 generate_path_tear(path_tear=path_req, is_autobandwidth=True, new_bw=new_bw)
 
             elif avg_diff < self.ab_instance.adjust_threshold * ADJUST_COEFFICIENT:
                 # increase bw
                 Logger.logger.info("ABService: increase bw for " + key + " by " +
                                    str(self.ab_instance.adjust_threshold))
+                self.db_instance.update_path_state(key, False)
+                path_req = self.db_instance.get_request_data(key)
+                new_bw = int(path_req[DbService.DB_SPEED]) + self.ab_instance.adjust_threshold
+                generate_path_tear(path_tear=path_req, is_autobandwidth=True, new_bw=new_bw)
             else:
                 Logger.logger.info("ABService: resetting measured diff for " + key)
                 del data[DIFF_KEY]

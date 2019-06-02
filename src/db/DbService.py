@@ -28,6 +28,7 @@ class DbService:
     DB_PATH_ENABLED = 'path_enabled'
     DB_RESERVED_INTERFACE = 'reserved_iface'
     DB_RESERVED_CLASS = 'reserved_class'
+    DB_FROM_IP = 'current_ip'
 
     def __init__(self):
         self.db_instance = TinyDB(storage=MemoryStorage).table()
@@ -62,6 +63,16 @@ class DbService:
     def get_reserved_interface_request(self, interface):
         key = self.db_instance.search(where(self.DB_RESERVED_INTERFACE) == interface)
         return self.get_request_data(key)
+
+    def get_previous_hop(self, key):
+        data = self.get_request_data(key)
+        if self.DB_FROM_IP in data:
+            return data[self.DB_FROM_IP]
+        else:
+            return None
+
+    def set_previous_hop(self, key, src_ip):
+        self.db_instance.update({self.DB_FROM_IP: src_ip}, where(self.DB_KEY) == key)
 
     def flush(self):
         self.db_instance.purge()

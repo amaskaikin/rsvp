@@ -71,6 +71,13 @@ def get_current_hop(ip_dst):
         return output[4]
 
 
+def get_direction_ip(static_route, next_ip):
+    if static_route is None:
+        return next_ip, False
+    else:
+        return get_next_hop(static_route[0]), True
+
+
 def send_next_hop(ip, data, msg_type, is_static):
     src_ip = get_current_hop(ip)
     Logger.logger.info('src' + src_ip)

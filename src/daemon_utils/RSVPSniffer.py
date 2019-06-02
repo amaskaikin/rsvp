@@ -18,7 +18,6 @@ def catch_packet():
             print("Waiting...")
             pkt = sock.recv(2048)
             print("Received...")
-#            modify_packet(pkt)
             process_packet(pkt)
 
     except KeyboardInterrupt:
@@ -29,7 +28,6 @@ def process_packet(pkt):
     data = IP(pkt)
     rsvp_class = data.getlayer('RSVP').getfieldval('Class')
     if rsvp_class == 0x01:
-        # TODO: check is next interface exists in packet data
         callback = process_path(data)
         process_callback(callback, lambda: process_path_last_hop(callback.request, callback.data, callback.key))
     if rsvp_class == 0x02:
@@ -50,8 +48,8 @@ def process_packet(pkt):
 
 
 def process_callback(callback, lasthop_processor):
-    Logger.logger.info('Process callback ' + str(callback.request.src_ip) + 'result ' + str(callback.result) +
-                       'is_next' + str(callback.is_next))
+    Logger.logger.info('Process callback: ' + str(callback.request.src_ip) + ', result: ' + str(callback.result) +
+                       ', is_next: ' + str(callback.is_next))
     if callback.result:
         if not callback.is_next:
             error_o, func = lasthop_processor()

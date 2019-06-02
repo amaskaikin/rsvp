@@ -1,5 +1,5 @@
 from src.utils.Const import Const
-from src.htb.Reserve import reserve, remove_reserve
+from src.htb.Reserve import reserve, remove_reserve, db_service
 from src.rsvp.model.CallbackCommands import CallbackCommands
 from src.utils.RSVPDataHelper import get_spec_data
 from src.rsvp.model.Error import Error
@@ -17,6 +17,10 @@ def process_path_last_hop(req, data, key):
     if is_reserved:
         Logger.logger.info('Reservation success')
         ip = get_next_hop(req.src_ip)
+        previous_static_hop = db_service.get_previous_hop(key)
+        if previous_static_hop is not None:
+            ip = previous_static_hop
+
         src_ip = get_current_hop(req.src_ip)
         data.getlayer('IP').setfieldval('dst', ip)
         data.getlayer('IP').setfieldval('src', src_ip)
@@ -52,10 +56,14 @@ def process_pathtear_last_hop(req, data, key):
     Logger.logger.info('Parameters - src_ip: ' + req.src_ip +
                        ', dst ip: ' + req.dst_ip +
                        ', tos: ' + str(req.tos) + ', rate: ' + str(req.speed))
+    previous_static_hop = db_service.get_previous_hop(key)
     is_destroyed, ret = remove_reserve(key)
     if is_destroyed:
         Logger.logger.info('Destroyed successfully')
         ip = get_next_hop(req.src_ip)
+        if previous_static_hop is not None:
+            ip = previous_static_hop
+
         src_ip = get_current_hop(req.src_ip)
         data.getlayer('IP').setfieldval('dst', ip)
         data.getlayer('IP').setfieldval('src', src_ip)

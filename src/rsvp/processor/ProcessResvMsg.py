@@ -12,8 +12,12 @@ def process_resv(data):
     req.src_ip = ret[0]
     req.dst_ip = ret[1]
 
-    # ip = data.getlayer(0).getfieldval('dst')  # from IP layer
     next_ip = get_next_hop(req.src_ip)
+    previous_static_hop = db_service.get_previous_hop(key)
+    if previous_static_hop is not None:
+        next_ip = previous_static_hop
+    Logger.logger.info('[Process Resv]: next_ip=' + next_ip + ', sender_ip=' + req.src_ip)
+
     is_sender = next_ip == req.src_ip
     callback = Callback(req, data, key)
 
@@ -62,12 +66,16 @@ def process_resv_tear(data):
     req.speed = ret[2]
     req.tos = ret[3]
 
+    previous_static_hop = db_service.get_previous_hop(key)
     is_destroyed, ret = remove_reserve(key)
 
     Logger.logger.info('[ResvTear] Destroying request: src ip: ' + str(req.src_ip) + ', dst ip: ' + str(req.dst_ip) +
                        ', tos: ' + str(req.tos) + ', rate: ' + str(req.speed))
 
     next_ip = get_next_hop(req.src_ip)
+    if previous_static_hop is not None:
+        next_ip = previous_static_hop
+
     is_sender = next_ip == req.src_ip
     callback = Callback(req, data, key)
 

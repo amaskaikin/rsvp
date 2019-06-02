@@ -21,7 +21,7 @@ def generate_path(path_msg, dst):
                     sender_template=path_msg.sender_template, adspec=path_msg.adspec)
     if path_msg.route_obj is not None:
         rsvp_pkt['route'] = path_msg.route_obj
-    pkt = IP(dst=dst)/generate_msg(**rsvp_pkt)
+    pkt = IP(dst=dst, src=path_msg.src_ip.lstrip('0'))/generate_msg(**rsvp_pkt)
     # pkt = IP(dst=dst) / RSVP(TTL=65, Class=0x01) / RSVP_Object(Class=0x03) / RSVP_HOP(neighbor='192.168.0.107')
     pkt.show()
     Logger.logger.info('Sending Path message to ' + dst.lstrip('0') + ' . . .')
